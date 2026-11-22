@@ -419,54 +419,69 @@ section[id]{scroll-margin-top:100px}
 .poster.tall{width:clamp(170px,19vw,230px)}
 .poster.tall .fecha{top:10px;right:10px;font-size:.68rem;padding:3px 7px}
 
-/* ===== Cápsulas unificadas (Kick, YouTube, TikTok) con grilla 3x2 ===== */
-.panel.kick { --c: #53fc18; }
-.panel.kick h2::before { background: #53fc18; }
+/* ===== Cápsulas unificadas (Kick, YouTube, TikTok): cada una con su propio scroll ===== */
+.panel.kick{--c:#53fc18}
+.panel.kick h2::before{background:#53fc18}
 
-.head-actions { display: flex; align-items: center; gap: 8px; }
-.nav-btn {
-  width: 38px; height: 38px; border-radius: 50%;
-  border: 1px solid var(--line); background: var(--surface); color: var(--text);
-  font-size: 1.4rem; line-height: 1; cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center;
-  transition: border-color .2s, background .2s, transform .2s;
-}
-.nav-btn:hover { border-color: var(--c, var(--violet)); background: var(--surface2); transform: scale(1.06); }
+.head-actions{display:flex;align-items:center;gap:8px}
+.pill{display:inline-flex;align-items:center;padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);
+  color:var(--text);text-decoration:none;font-weight:700;font-size:.9rem;white-space:nowrap;transition:border-color .2s,background .2s,transform .2s}
+.pill:hover{border-color:var(--c,var(--violet));background:var(--surface2);transform:translateY(-2px)}
+.sub-h .pill{padding:7px 14px;font-size:.82rem}
 
-.media-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 290px;
-  gap: 22px;
-  align-items: stretch;
-}
+.media-layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px;align-items:start}
+.media-main{display:flex;flex-direction:column;gap:6px;min-width:0}
+.media-layout .cap-side{position:sticky;top:96px;align-self:start}
+.media-main .sub-h{margin:2px 4px 0;font-size:1rem}
+.media-main #clips{margin-top:14px}
 
-/* Grilla 3 columnas x 2 filas con scroll horizontal */
-.grid-3x2 {
-  display: grid;
-  grid-template-rows: repeat(2, auto);
-  grid-auto-flow: column;
-  grid-auto-columns: calc((100% - 28px) / 3);
-  gap: 14px;
-  overflow-x: auto;
-  padding: 6px 2px 16px;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-color: var(--violet) transparent;
+/* caja con scroll vertical: muestra ~2 filas y deja asomar la siguiente para que se note que hay más */
+.scroll-box{container-type:inline-size;min-width:0}
+.grid-3x2{
+  --cols:3;--gap:16px;--pad:8px;--ratio:.5625;--rows:2.35;
+  --cw:calc((100cqw - var(--pad) * 2 - var(--gap) * (var(--cols) - 1)) / var(--cols));
+  display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));grid-auto-flow:row;align-content:start;gap:var(--gap);
+  padding:var(--pad);max-height:calc(var(--cw) * var(--ratio) * var(--rows) + var(--gap) * 2 + var(--pad) * 2);
+  overflow-y:auto;overflow-x:hidden;scroll-snap-type:y proximity;scrollbar-width:thin;scrollbar-color:var(--c,var(--violet)) transparent;
+  border-radius:22px;
 }
-.grid-3x2 .poster {
-  width: 100%;
-  scroll-snap-align: start;
-}
-.grid-3x2 .poster.med { aspect-ratio: 16/9; }
-.grid-3x2.tt-grid .poster.tall { aspect-ratio: 3/4; } /* proporción cómoda para 2 filas de TikTok */
+.grid-3x2::-webkit-scrollbar{width:8px}
+.grid-3x2::-webkit-scrollbar-thumb{background:var(--c,var(--violet));border-radius:99px}
+.grid-3x2::-webkit-scrollbar-track{background:transparent}
+.grid-3x2.tt-grid{--cols:4;--ratio:1.7778;--rows:1.6}
 
-/* Si YouTube cae en el iframe de respaldo (sin API) */
-.grid-3x2:has(iframe.lista) { display: block; overflow: visible; padding: 4px; }
-.grid-3x2 iframe.lista { width: 100%; aspect-ratio: 16/9; border: 0; border-radius: 28px; box-shadow: 0 0 0 2px #ff2d2d, 0 30px 70px -30px #ff2d2d; background: #000; }
+/* tarjetas */
+.grid-3x2 .poster,.grid-3x2 .poster.med,.grid-3x2 .poster.tall{width:100%;aspect-ratio:16/9;border-radius:16px;scroll-snap-align:start;
+  box-shadow:inset 0 0 0 1px rgba(196,161,255,.14);transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.grid-3x2.tt-grid .poster,.grid-3x2.tt-grid .poster.tall{aspect-ratio:9/16}
+.grid-3x2 .poster:hover{transform:translateY(-3px);box-shadow:inset 0 0 0 2px var(--c,var(--violet-soft)),0 10px 24px -14px var(--c,var(--violet))}
+.grid-3x2 .poster::after{background:linear-gradient(to top,rgba(11,4,21,.96) 0%,rgba(11,4,21,.55) 36%,transparent 66%)}
+.grid-3x2 .poster-title{left:12px;right:12px;bottom:11px;font-size:.88rem;line-height:1.28}
+.grid-3x2.tt-grid .poster-title{font-size:.8rem}
+.grid-3x2 .play{width:44px;height:44px;margin:-22px 0 0 -22px;box-shadow:0 0 0 5px rgba(139,92,246,.25);opacity:.9}
+.grid-3x2 .play::before{border-width:8px 0 8px 13px}
+.grid-3x2 .poster:hover .play{transform:scale(1.12);opacity:1}
+.grid-3x2 .poster .fecha{top:10px;right:10px;font-size:.7rem;padding:3px 8px;background:rgba(11,4,21,.78);backdrop-filter:blur(6px);max-width:calc(100% - 20px)}
+.grid-3x2 .badge,.grid-3x2 .plat{top:10px;left:10px;font-size:.7rem;padding:3px 9px}
+.grid-3x2 .kick-cta{grid-column:1/-1;aspect-ratio:auto}
+.grid-3x2 .vacio{grid-column:1/-1}
 
-@media (max-width: 900px) {
-  .media-layout { grid-template-columns: 1fr; }
+/* YouTube sin API: iframe de respaldo, sin recorte */
+.grid-3x2:has(iframe.lista){display:block;max-height:none;overflow:visible;padding:4px}
+.grid-3x2 iframe.lista{width:100%;aspect-ratio:16/9;border:0;border-radius:24px;box-shadow:0 0 0 2px #ff2d2d,0 30px 70px -30px #ff2d2d;background:#000}
+
+@media (max-width:900px){
+  .media-layout{grid-template-columns:1fr}
+  .media-layout .cap-side{position:static}
 }
-@media (max-width: 680px) {
-  .grid-3x2 { grid-auto-columns: calc((100% - 14px) / 2); } /* 2x2 en celular */
+@media (max-width:680px){
+  .grid-3x2{--cols:2;--gap:12px}
+  .grid-3x2.tt-grid{--cols:2;--rows:1.5}
+}
+/* reels: sin etiqueta de plataforma (ya está en el título de la sección) y la fecha arriba a la izquierda */
+.grid-3x2.tt-grid .plat,.grid-3x2.tt-grid .badge{display:none}
+.grid-3x2.tt-grid .poster .fecha{left:10px;right:auto}
+@media (max-width:520px){
+  .grid-3x2{--cols:1;--rows:2.4}
+  .grid-3x2.tt-grid{--cols:2;--rows:1.5}
 }
