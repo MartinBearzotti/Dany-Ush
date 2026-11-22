@@ -19,7 +19,17 @@ async function leerSeguidores(user) {
   try {
     const r = await fetch(`https://www.tiktok.com/@${user}`, { signal: AbortSignal.timeout(2500), headers: HEAD });
     if (!r.ok) return null;
-    const m = (await r.text()).match(/"followerCount":\s*"?(\d+)/);
+    const html = await r.text();
+    // primero el dato exacto del perfil (statsV2); el primer "followerCount" suelto puede ser un número redondeado
+    const j = html.match(/<script[^>]+id="__UNIVERSAL_DATA_FOR_HYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
+    if (j) {
+      try {
+        const ui = JSON.parse(j[1])?.__DEFAULT_SCOPE__?.["webapp.user-detail"]?.userInfo;
+        const n = Number(ui?.statsV2?.followerCount ?? ui?.stats?.followerCount);
+        if (n > 0) return n;
+      } catch (_) {}
+    }
+    const m = html.match(/"followerCount":\s*"?(\d+)/);
     return m ? Number(m[1]) : null;
   } catch (_) { return null; }
 }
@@ -76,14 +86,21 @@ async function leerVideos(url) {
 
 export default async function handler(req, res) {
   const env = process.env;
-  const url = env.TIKTOK_RSS_URL && !/^CAMBIAR/i.test(env.TIKTOK_RSS_URL) ? env.TIKTOK_RSS_URL : RSS_POR_DEFECTO;
   const user = env.TIKTOK_USER || "dany_ush_oficial";
   const debug = new URL(req.url, "http://x").searchParams.has("debug");
+  // primero la URL de Vercel (si la hay) y, si no trae reels (por ejemplo, si es el link del perfil y no del feed), el feed por defecto
+  const candidatos = [...new Set([env.TIKTOK_RSS_URL, RSS_POR_DEFECTO].filter((u) => u && !/^CAMBIAR/i.test(u)))];
 
-  // seguidores y lista de reels van en paralelo
-  const [seg, vids] = await Promise.allSettled([leerSeguidores(user), leerVideos(url)]);
-  const out = { videos: vids.status === "fulfilled" ? vids.value : [] };
-  if (seg.status === "fulfilled" && seg.value) out.seguidores = seg.value;
+  const segP = leerSeguidores(user); // corre mientras se lee el feed
+  let vids = [], url = null; const errores = {};
+  for (const u of candidatos) {
+    try { vids = await leerVideos(u); } catch (e) { errores[u] = String(e.message || e); vids = []; }
+    if (vids.length) { url = u; break; }
+    errores[u] = errores[u] || "no tiene reels (¿es el link del feed RSS?)";
+  }
+  const seg = { status: "fulfilled", value: await segP };
+  const out = { videos: vids };
+  if (seg.value) out.seguidores = seg.value;
 
   // visualizaciones de los reels más nuevos (todas a la vez, con tope de tiempo)
   if (out.videos.length) {
@@ -98,8 +115,7 @@ export default async function handler(req, res) {
   if (!out.videos.length) out.aviso = "No se pudieron leer los videos del feed RSS de TikTok";
   if (debug) {
     out.debug = {
-      rss: url,
-      error: vids.status === "rejected" ? String(vids.reason?.message || vids.reason) : null,
+      rss: url, probados: errores,
       reels: out.videos.length,
       conMiniatura: out.videos.filter((v) => v.thumb).length,
       conVistas: out.videos.filter((v) => v.vistas != null).length,

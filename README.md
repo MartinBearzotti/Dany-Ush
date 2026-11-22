@@ -4,7 +4,7 @@ Página de directos (Kick), videos (YouTube) y reels (TikTok). Se despliega en V
 
 ## Archivos
 - `index.html`, `styles.css`, `app.js`: la página. Lo editable está en `CONFIG`, arriba de `app.js`.
-- `api/kick.js`, `api/kick-clips.js`, `api/youtube.js`, `api/tiktok.js`, `api/tiktok-thumb.js`, `api/seguidores.js`: funciones de Vercel (tienen que estar dentro de la carpeta `api/`).
+- `api/kick.js`, `api/kick-clips.js`, `api/youtube.js`, `api/tiktok.js`, `api/tiktok-thumb.js`, `api/tiktok-img.js`, `api/seguidores.js`: funciones de Vercel (tienen que estar dentro de la carpeta `api/`).
 
 ## Variables de entorno (Vercel > Settings > Environment Variables)
 | Variable | Para qué |

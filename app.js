@@ -124,7 +124,7 @@ discordNombre: "",
 
 // Números a mano por si alguna plataforma no entrega el dato sola (0 = no mostrar). Los automáticos tienen prioridad.
 
-seguidores: { kick: 0, youtube: 0, tiktok: 11148, discord: 63 }, // discord: dato real del servidor (se actualiza solo)
+seguidores: { kick: 0, youtube: 0, tiktok: 11148, discord: 63 }, seguidoresPiso: ["tiktok"], // piso: TikTok nunca muestra menos que el número de arriba (subilo a mano cada tanto). Sacá "tiktok" de la lista para que sea 100% automático. // discord: dato real del servidor (se actualiza solo)
 
 tiktokVideos: [ // reels a mano: se usan SOLO si la API de TikTok no trae nada
 { id: "7710750350315097345", titulo: "no entiendo nada!!!... #directos #stream #backseatchampions", fecha: "2026-11-21T22:11:13Z" },
@@ -280,7 +280,16 @@ b.setAttribute("aria-label", `Reproducir: ${titulo}`);
 
 if (thumb) {
 b.style.backgroundImage = `url("${thumb}")`;
-if (tipo === "tiktok") { const im = new Image(); im.onerror = () => { b.style.backgroundImage = ""; b.classList.add("sin-thumb"); }; im.src = thumb; } // miniatura vencida o bloqueada: portada de respaldo
+if (tipo === "tiktok") { // si TikTok bloquea la imagen, se pide a través de /api/tiktok-img; si tampoco, portada de respaldo
+const sinThumb = () => { b.style.backgroundImage = ""; b.classList.add("sin-thumb"); };
+const im = new Image();
+im.onerror = () => {
+const prox = `/api/tiktok-img?u=${encodeURIComponent(thumb)}`, im2 = new Image();
+im2.onload = () => { b.style.backgroundImage = `url("${prox}")`; };
+im2.onerror = sinThumb; im2.src = prox;
+};
+im.src = thumb;
+}
 } else if (tipo === "tiktok") b.classList.add("sin-thumb");
 
 b.innerHTML = `<span class="play"></span><span class="poster-title"></span>${chipTxt(fecha, vistas)}`;
@@ -833,6 +842,9 @@ requestAnimationFrame(paso);
 function setSeg(p, n, sub) {
 
 n = Number(n); if (!n) return;
+
+// el número de CONFIG.seguidores funciona como "piso": si la plataforma entrega uno menor (redondeado o viejo), no baja
+if ((CONFIG.seguidoresPiso || []).includes(p) && CONFIG.seguidores[p] > n) n = CONFIG.seguidores[p];
 
 const el = document.querySelector(`.seg[data-p="${p}"]`); if (!el) return;
 
