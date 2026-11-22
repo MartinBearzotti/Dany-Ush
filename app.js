@@ -3,17 +3,17 @@ const CONFIG = {
   nombre: "DANY-USH",
   logo: "img/logo.png",
   tagline: "Directos, videos y reels en un solo lugar.",
-  bio: "Streamer argentino. Directos en Kick, videos en YouTube y reels en TikTok.",
+  bio: "Gaming divertido y aventuras en la Tierra Media. El fin es divertirse y pasar un buen rato.",
   email: "",                          // mail para marcas y colaboraciones
   redes: [                            // los que tengan url se muestran
     { nombre: "Instagram", url: "" },
-    { nombre: "Discord", url: "" },
+    { nombre: "Discord", url: "https://discord.gg/bghCDSQVdm" },
     { nombre: "WhatsApp", url: "" },
   ],
   donar: { texto: "Invitame un cafecito", url: "" },   // Cafecito / MercadoPago
-  kick: "danielquiroga64",            // kick.com/USUARIO
-  youtubeCanal: "https://www.youtube.com/",   // link del canal
-  tiktok: "danielquiroga64",
+  kick: "CAMBIAR-USUARIO-KICK",       // kick.com/USUARIO (el del canal, no el de settings)
+  youtubeCanal: "https://www.youtube.com/@dany-ush6495",   // link del canal
+  tiktok: "dany_ushh",
   // Horario fijo de directos (hora Argentina). dia: 0=domingo ... 6=sábado
   horario: [
     { dia: 2, hora: "21:00" },
