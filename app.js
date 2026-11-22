@@ -271,7 +271,10 @@ b.type = "button"; b.className = `poster ${clase}`;
 
 b.setAttribute("aria-label", `Reproducir: ${titulo}`);
 
-if (thumb) b.style.backgroundImage = `url("${thumb}")`;
+if (thumb) {
+b.style.backgroundImage = `url("${thumb}")`;
+if (tipo === "tiktok") { const im = new Image(); im.onerror = () => { b.style.backgroundImage = ""; b.classList.add("sin-thumb"); }; im.src = thumb; } // miniatura vencida o bloqueada: portada de respaldo
+} else if (tipo === "tiktok") b.classList.add("sin-thumb");
 
 b.innerHTML = `<span class="play"></span><span class="poster-title"></span>${fecha ? `<span class="fecha">${fmt(fecha)}</span>` : ""}`;
 
@@ -944,4 +947,3 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
     links.forEach((a) => { const sec = document.querySelector(a.getAttribute("href")); if (sec) io.observe(sec); });
   }
 })();
-
