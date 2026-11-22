@@ -385,9 +385,12 @@ pintarProximo(); pintarLive(); if (d.seguidores) { setStat("#st-kick", d.seguido
 
 DATA.kick = (d.vods || []).map((v) => ({ ...v, tipo: "kickvod" }));
 
-fila($("#rail-kick"), DATA.kick, "med", "Próximamente"); pintarUltimo();
+fila($("#rail-kick"), DATA.kick.slice(0, 8), "med", "Próximamente"); pintarUltimo();
 
 }
+
+// Kick: streams y clips en grilla (no en carrusel), así con pocos videos no queda un hueco enorme
+$("#rail-kick").classList.add("kgrid"); $("#rail-clips").classList.add("kgrid");
 
 async function cargarYouTube() {
 
@@ -538,6 +541,10 @@ const p = poster(v, "med"), t = document.createElement("span");
 t.className = `plat ${v.plat}`; t.textContent = PLAT[v.plat]; p.append(t); g.append(p);
 
 });
+
+// la tarjeta grande solo cuando hay varios videos; con 1 o 2 se ven todas del mismo tamaño
+const primera = g.firstElementChild;
+if (primera && Math.min(todos.length, visibles) >= 3) primera.classList.add("destaca");
 
 $("#mas").hidden = todos.length <= visibles;
 
@@ -954,9 +961,13 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   let d = { clips: [] };
   try { d = await (await fetch("/api/kick-clips")).json(); } catch (_) {}
   const auto = (d.clips || []).map((c) => ({ ...c, tipo: "kickclip" }));
-  if (!auto.length) return;
-  $("#link-clips").href = `https://kick.com/${CONFIG.kick}/clips`;
+  const clipsUrl = `https://kick.com/${CONFIG.kick}/clips`;
+  $("#link-clips").href = clipsUrl;
   $("#clips").hidden = false;
-  fila($("#rail-clips"), [...CLIPS, ...auto], "med", "");
+  if (!auto.length && !CLIPS.length) { // la API no entregó clips: botón directo a los clips en Kick
+    $("#rail-clips").innerHTML = `<a class="kick-cta" href="${clipsUrl}" target="_blank" rel="noopener"><b>Mirá los clips en Kick</b><span>Los mejores momentos del canal, ordenados por más vistos.</span><em>Ver clips</em></a>`;
+    return;
+  }
+  fila($("#rail-clips"), [...CLIPS, ...auto].slice(0, 12), "med", "");
 })();
 

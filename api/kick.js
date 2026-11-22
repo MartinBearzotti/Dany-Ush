@@ -23,8 +23,8 @@ export default async function handler(req, res) {
     if (r.ok) {
       const v = await r.json();
       out.vods = (Array.isArray(v) ? v : []).map((x) => ({
-        id: x.video?.uuid, titulo: x.session_title || "Stream anterior", fecha: x.created_at,
-        thumb: x.thumbnail?.src || x.thumbnail,
+        id: x.video?.uuid, titulo: x.session_title || "Stream anterior", fecha: x.start_time || x.created_at,
+        thumb: x.thumbnail?.src || x.thumbnail, vistas: x.views ?? x.video?.views ?? null,
       })).filter((x) => x.id);
     }
   } catch (_) {}

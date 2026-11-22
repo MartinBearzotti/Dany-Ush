@@ -116,7 +116,7 @@ h2{font-family:var(--display);font-weight:500;font-size:clamp(1.15rem,2.4vw,1.6r
 .chip[aria-pressed="true"]{background:linear-gradient(135deg,var(--violet),#6d3df0);border-color:transparent;color:#fff}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;padding:8px 4px}
 .grid .poster.med{width:100%}
-@media (min-width:900px){.grid .poster:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:auto;min-height:100%}}
+@media (min-width:900px){.grid .poster.destaca{grid-column:span 2;grid-row:span 2;aspect-ratio:auto;min-height:100%}}
 .vacio{color:var(--muted);padding:20px 0}
 .mas-wrap{display:flex;justify-content:center;margin-top:14px}
 .tt-embed{display:flex;justify-content:center;margin-top:10px}.tt-embed:empty{display:none}
@@ -399,3 +399,19 @@ section[id]{scroll-margin-top:100px}
   .cap-discord em{justify-self:start;margin-top:12px}
   .cap-about{flex-direction:column;align-items:flex-start}
 }
+
+/* Kick: streams anteriores y clips en grilla prolija */
+.rail.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;overflow:visible;padding:14px 4px 6px;
+  -webkit-mask:none;mask:none;scroll-snap-type:none}
+.kgrid .poster.med{width:100%}
+.kgrid .poster-title{font-size:.95rem}
+.sub-h{margin-top:18px}
+/* acceso directo a los clips cuando la API no los trae */
+.kick-cta{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;padding:26px 28px;border-radius:26px;text-decoration:none;color:var(--text);
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(135deg,#53fc18,var(--violet)) border-box;border:1px solid transparent;transition:transform .25s,box-shadow .25s}
+.kick-cta:hover{transform:translateY(-4px);box-shadow:0 22px 50px -26px #53fc18}
+.kick-cta b{display:block;font-family:var(--display);font-weight:500;font-size:1.05rem}
+.kick-cta span{display:block;color:var(--muted);margin-top:4px}
+.kick-cta em{font-style:normal;font-weight:800;padding:10px 20px;border-radius:999px;background:#53fc18;color:#0b0415}
+/* tarjetas de TikTok y Kick en "Lo último": el chip de fecha/vistas no tapa el título */
+.poster .fecha{max-width:calc(100% - 110px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
