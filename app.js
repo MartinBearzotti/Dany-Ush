@@ -124,7 +124,7 @@ discordNombre: "",
 
 // Números a mano por si alguna plataforma no entrega el dato sola (0 = no mostrar). Los automáticos tienen prioridad.
 
-seguidores: { kick: 0, youtube: 0, tiktok: 11148, discord: 63 }, // discord: dato real del servidor (se actualiza solo)
+seguidores: { kick: 134, youtube: 291, tiktok: 11100, discord: 63 }, // solo se usan hasta que cada plataforma entregue el dato real; después se reemplazan solos
 
 tiktokVideos: [ // reels a mano: se usan SOLO si la API de TikTok no trae nada
 { id: "7710750350315097345", titulo: "no entiendo nada!!!... #directos #stream #backseatchampions", fecha: "2026-11-21T22:11:13Z" },
@@ -709,7 +709,7 @@ $("#lista-setup").innerHTML = CONFIG.setup
 
 const fmtN = (n) => new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(n);
 
-function setStat(sel, n, txt) { const e = $(sel); e.textContent = `${fmtN(n)} ${txt}`; e.hidden = false; }
+function setStat(sel, n, txt) { const e = $(sel); e.textContent = `${Number(n).toLocaleString("es-AR")} ${txt}`; e.hidden = false; }
 
 function pintarLive() {
 
@@ -732,6 +732,8 @@ try {
 const d = await (await fetch("/api/kick")).json();
 
 if (!!d.live !== enVivo) { enVivo = !!d.live; KICK = d; pintarProximo(); pintarLive(); armarSlides(); }
+
+if (d.seguidores) { setStat("#st-kick", d.seguidores, "seguidores"); setSeg("kick", d.seguidores); }
 
 } catch (_) {}
 
@@ -888,3 +890,15 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   document.addEventListener("click", (e) => { if (!cont.contains(e.target)) cerrar(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") { cerrar(); btn.focus(); } });
 })();
+
+/* ---- Seguidores: se vuelven a leer cada 5 minutos (YouTube, TikTok y Discord) para no quedar desactualizados ---- */
+setInterval(async () => {
+  try { const y = await (await fetch("/api/youtube")).json(); if (y.subs) { setStat("#st-yt", y.subs, "suscriptores"); setSeg("youtube", y.subs); } } catch (_) {}
+  try { const t = await (await fetch("/api/tiktok")).json(); if (t.seguidores) setSeg("tiktok", t.seguidores); } catch (_) {}
+  if (dc) {
+    try {
+      const d = await (await fetch(`https://discord.com/api/v10/invites/${dc.url.split("/").pop()}?with_counts=true`)).json();
+      if (d.approximate_member_count) setSeg("discord", d.approximate_member_count, d.approximate_presence_count ? `${d.approximate_presence_count.toLocaleString("es-AR")} en línea ahora` : "");
+    } catch (_) {}
+  }
+}, 300000);
