@@ -560,7 +560,7 @@ l.className = "social"; if (r.url) { l.href = r.url; l.target = "_blank"; l.rel 
 
 l.style.setProperty("--c", COLOR[r.nombre] || "#8b5cf6");
 
-l.innerHTML = "<i></i>"; l.append(r.nombre); $("#redes").append(l);
+l.innerHTML = "<i></i>"; l.append(r.nombre); $("#redes")?.append(l);
 
 });
 
@@ -712,7 +712,7 @@ $("#lista-setup").innerHTML = CONFIG.setup
 
 const fmtN = (n) => new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(n);
 
-function setStat(sel, n, txt) { const e = $(sel); e.textContent = `${fmtN(n)} ${txt}`; e.hidden = false; }
+function setStat(sel, n, txt) { const e = $(sel); if (!e) return; e.textContent = `${fmtN(n)} ${txt}`; e.hidden = false; }
 
 function pintarLive() {
 
@@ -787,12 +787,6 @@ msg.textContent = "¡Listo! Te vamos a avisar."; $("#avisos-form").hidden = true
 } catch (_) { msg.textContent = "No pude guardar tu mail. Probá de nuevo en un rato."; }
 
 });
-
-} else if (dc) {
-
-cap.hidden = false; $("#avisos-txt").textContent = "Activá las notificaciones en el Discord y te enterás apenas arranca el directo.";
-
-const b = $("#avisos-dc"); b.href = dc.url; b.hidden = false;
 
 }
 
