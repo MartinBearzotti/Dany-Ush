@@ -90,13 +90,18 @@
       <div class="row-head">
         <h2>Directos y Clips de Kick</h2>
         <div class="head-actions">
-          <button class="nav-btn" data-target="rail-kick" data-dir="-1" type="button" aria-label="Anterior">‹</button>
-          <button class="nav-btn" data-target="rail-kick" data-dir="1" type="button" aria-label="Siguiente">›</button>
           <a class="pill" id="link-kick2" target="_blank" rel="noopener">Ver canal</a>
         </div>
       </div>
       <div class="media-layout">
-        <div class="grid-3x2" id="rail-kick"></div>
+        <div class="media-main">
+          <h3 class="sub-h">Streams anteriores</h3>
+          <div class="scroll-box"><div class="grid-3x2" id="rail-kick"></div></div>
+          <div id="clips" hidden>
+            <h3 class="sub-h">Clips populares <a class="pill" id="link-clips" target="_blank" rel="noopener">Ver todos en Kick</a></h3>
+            <div class="scroll-box"><div class="grid-3x2" id="rail-clips"></div></div>
+          </div>
+        </div>
         <aside class="cap cap-side">
           <img class="av" alt="">
           <h3>Canal de Kick</h3>
@@ -104,23 +109,17 @@
           <a class="btn primary" id="btn-kick" target="_blank" rel="noopener">Seguir en Kick</a>
         </aside>
       </div>
-      <div id="clips" hidden>
-        <h3 class="sub-h">Clips populares <a class="pill" id="link-clips" target="_blank" rel="noopener">Ver todos en Kick</a></h3>
-        <div class="grid-3x2" id="rail-clips"></div>
-      </div>
     </section>
 
     <section class="row panel yt" id="youtube">
       <div class="row-head">
         <h2>Videos de YouTube</h2>
         <div class="head-actions">
-          <button class="nav-btn" data-target="rail-yt" data-dir="-1" type="button" aria-label="Anterior">‹</button>
-          <button class="nav-btn" data-target="rail-yt" data-dir="1" type="button" aria-label="Siguiente">›</button>
           <a class="pill" id="link-yt" target="_blank" rel="noopener">Ver canal</a>
         </div>
       </div>
       <div class="media-layout">
-        <div class="grid-3x2" id="rail-yt"></div>
+        <div class="media-main"><div class="scroll-box"><div class="grid-3x2" id="rail-yt"></div></div></div>
         <aside class="cap cap-side">
           <img class="av" alt="">
           <h3>Canal de YouTube</h3>
@@ -134,13 +133,11 @@
       <div class="row-head">
         <h2>Reels de TikTok</h2>
         <div class="head-actions">
-          <button class="nav-btn" data-target="rail-tt" data-dir="-1" type="button" aria-label="Anterior">‹</button>
-          <button class="nav-btn" data-target="rail-tt" data-dir="1" type="button" aria-label="Siguiente">›</button>
           <a class="pill" id="link-tt" target="_blank" rel="noopener">Ver perfil</a>
         </div>
       </div>
       <div class="media-layout">
-        <div class="grid-3x2 tt-grid" id="rail-tt"></div>
+        <div class="media-main"><div class="scroll-box"><div class="grid-3x2 tt-grid" id="rail-tt"></div></div></div>
         <aside class="cap cap-side">
           <img class="av" alt="">
           <h3 id="tt-handle"></h3>
