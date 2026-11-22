@@ -2,25 +2,25 @@
 // Env: YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID (empieza con UC...)
 export default async function handler(req, res) {
   const key = process.env.YOUTUBE_API_KEY, ch = process.env.YOUTUBE_CHANNEL_ID || "UCG7poDcbGtKNc4hAQWBvqpA";
-  res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
+  const cache = (ok) => res.setHeader("Cache-Control", ok ? "s-maxage=300, stale-while-revalidate=600" : "no-store");
   if (!key) { // sin clave: feed RSS público (últimos ~15 videos)
     try {
-      const xml = await (await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${ch}`)).text();
+      const xml = await (await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${ch}`, { signal: AbortSignal.timeout(5000) })).text();
       const dec = (s) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
       const videos = [...xml.matchAll(/<entry>[\s\S]*?<\/entry>/g)].map(([e]) => {
         const g = (t) => (e.match(new RegExp(`<${t}>([^<]*)</${t}>`)) || [])[1] || "";
         const id = g("yt:videoId");
         return { id, titulo: dec(g("title")), fecha: g("published"), thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` };
       }).filter((v) => v.id);
-      return res.status(200).json({ videos, live: null });
-    } catch (_) { return res.status(200).json({ videos: [], live: null }); }
+      cache(videos.length > 0); return res.status(200).json({ videos, live: null });
+    } catch (_) { cache(false); return res.status(200).json({ videos: [], live: null }); }
   }
   try {
     const uploads = "UU" + ch.slice(2);
     let videos = [], token = "";
     for (let i = 0; i < 6; i++) { // hasta 300 videos
       const u = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploads}&key=${key}${token ? "&pageToken=" + token : ""}`;
-      const d = await (await fetch(u)).json();
+      const d = await (await fetch(u, { signal: AbortSignal.timeout(5000) })).json();
       (d.items || []).forEach((it) => videos.push({
         id: it.snippet.resourceId.videoId, titulo: it.snippet.title, fecha: it.snippet.publishedAt,
         thumb: it.snippet.thumbnails?.high?.url || it.snippet.thumbnails?.medium?.url,
@@ -41,6 +41,6 @@ export default async function handler(req, res) {
       const st = s.items?.[0]?.statistics;
       if (st && !st.hiddenSubscriberCount) subs = Number(st.subscriberCount);
     } catch (_) {}
-    res.status(200).json({ videos, live, subs });
-  } catch (e) { res.status(200).json({ videos: [], live: null, aviso: "Error YouTube" }); }
+    cache(videos.length > 0); res.status(200).json({ videos, live, subs });
+  } catch (e) { cache(false); res.status(200).json({ videos: [], live: null, aviso: "Error YouTube" }); }
 }
