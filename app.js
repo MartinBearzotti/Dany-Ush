@@ -78,7 +78,7 @@ clips: [
 
 contenido: [
 
-{ titulo: "Batalla por la Tierra Media", texto: "Partidas, estrategia y mucho caos en la Tierra Media." },
+{titulo: "Valorant", texto: "Partidas, clutches y mucho humor. Entrá al directo y jugá con la comunidad." },
 
 { titulo: "Gaming y aventuras", texto: "Juegos variados, desafíos y todo lo que se me cruce." },
 
