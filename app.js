@@ -123,7 +123,7 @@ discordNombre: "",
 
 // Números a mano por si alguna plataforma no entrega el dato sola (0 = no mostrar). Los automáticos tienen prioridad.
 
-seguidores: { kick: 134, youtube: 291, tiktok: 11100, discord: 63 }, // solo se usan hasta que cada plataforma entregue el dato real; después se reemplazan solos
+seguidores: { kick: 134, youtube: 291, tiktok: 0, discord: 63 }, // solo se usan hasta que cada plataforma entregue el dato real; después se reemplazan solos
 
 tiktokVideos: [ // reels a mano: se usan SOLO si la API de TikTok no trae nada
 { id: "7710750350315097345", titulo: "no entiendo nada!!!... #directos #stream #backseatchampions", fecha: "2026-11-21T22:11:13Z" },
