@@ -39,7 +39,7 @@ document.title = `${CONFIG.nombre} | Directos, videos y reels`;
 $("#nombre").textContent = CONFIG.nombre;
 $("#tagline").textContent = CONFIG.tagline;
 $("#foot-name").textContent = `© ${new Date().getFullYear()} ${CONFIG.nombre}`;
-[["#link-kick", kickUrl], ["#link-kick2", kickUrl], ["#f-kick", kickUrl], ["#link-yt", CONFIG.youtubeCanal],
+[["#link-kick", kickUrl], ["#link-kick2", kickUrl], ["#f-kick", kickUrl], ["#link-yt", CONFIG.youtubeCanal], ["#btn-yt", CONFIG.youtubeCanal], ["#btn-tt", ttUrl],
  ["#f-yt", CONFIG.youtubeCanal], ["#link-tt", ttUrl], ["#f-tt", ttUrl]].forEach(([s, u]) => ($(s).href = u));
 
 /* ---- visor ---- */
@@ -196,14 +196,22 @@ function pintarUltimo() {
   armarSlides();
 }
 
-/* ---- Sobre mí, redes, donaciones, mail ---- */
+/* ---- Comunidad: bio, redes (cápsulas), Discord, donaciones, mail ---- */
 $("#bio").textContent = CONFIG.bio;
-CONFIG.redes.filter((r) => r.url).forEach((r) => {
-  const l = document.createElement("a"); l.href = r.url; l.target = "_blank"; l.rel = "noopener"; l.textContent = r.nombre; $("#redes").append(l);
+$("#tt-handle").textContent = `@${CONFIG.tiktok}`;
+document.querySelectorAll(".av").forEach((i) => (i.src = document.querySelector(".hero-logo").src));
+const COLOR = { Kick: "#53fc18", YouTube: "#ff2d2d", TikTok: "#22d3ee", Discord: "#5865f2", Instagram: "#e1306c", WhatsApp: "#25d366", X: "#ffffff", Twitch: "#9146ff" };
+[{ nombre: "Kick", url: kickUrl }, { nombre: "YouTube", url: CONFIG.youtubeCanal }, { nombre: "TikTok", url: ttUrl },
+ ...CONFIG.redes.filter((r) => r.url && r.nombre !== "Discord")].forEach((r) => {
+  const l = document.createElement("a");
+  l.className = "social"; l.href = r.url; l.target = "_blank"; l.rel = "noopener";
+  l.style.setProperty("--c", COLOR[r.nombre] || "#8b5cf6");
+  l.innerHTML = "<i></i>"; l.append(r.nombre); $("#redes").append(l);
 });
-if (CONFIG.email) { const m = $("#btn-mail"); m.href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; m.hidden = false; }
-if (CONFIG.donar.url) { const d = $("#btn-donar"); d.href = CONFIG.donar.url; d.textContent = CONFIG.donar.texto; d.hidden = false; }
-if (!CONFIG.email && !CONFIG.donar.url && !CONFIG.redes.some((r) => r.url)) $("#contacto").classList.add("sin-datos");
+const dc = CONFIG.redes.find((r) => r.nombre === "Discord" && r.url);
+if (dc) { const c = $("#cap-discord"); c.href = dc.url; c.hidden = false; } else $("#bento").classList.add("sin-discord");
+if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; $("#cap-mail").hidden = false; }
+if (CONFIG.donar.url) { const d = $("#btn-donar"); d.href = CONFIG.donar.url; d.textContent = CONFIG.donar.texto; $("#cap-donar").hidden = false; }
 
 /* ---- Portada principal rotativa: Kick, YouTube, TikTok ---- */
 function armarSlides() {

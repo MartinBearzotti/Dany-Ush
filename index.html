@@ -66,24 +66,44 @@
       <div class="rail" id="rail-kick"></div>
     </section>
 
-    <section class="row" id="youtube">
-      <div class="row-head"><h2>Videos de YouTube</h2><a id="link-yt" target="_blank" rel="noopener">Ver canal</a></div>
-      <div class="rail" id="rail-yt"></div>
+    <section class="row panel yt" id="youtube">
+      <div class="row-head"><h2>Videos de YouTube</h2><a class="pill" id="link-yt" target="_blank" rel="noopener">Ver canal</a></div>
+      <div class="yt-layout">
+        <div class="rail" id="rail-yt"></div>
+        <aside class="cap cap-side">
+          <img class="av" alt="">
+          <h3>Canal de YouTube</h3>
+          <p>Todos los videos de DANY-USH, del más nuevo al más viejo.</p>
+          <a class="btn primary" id="btn-yt" target="_blank" rel="noopener">Suscribirme</a>
+        </aside>
+      </div>
     </section>
 
-    <section class="row" id="tiktok">
-      <div class="row-head"><h2>Reels de TikTok</h2><a id="link-tt" target="_blank" rel="noopener">Ver perfil</a></div>
+    <section class="row panel tt" id="tiktok">
+      <div class="row-head"><h2>Reels de TikTok</h2><a class="pill" id="link-tt" target="_blank" rel="noopener">Ver perfil</a></div>
       <div class="rail" id="rail-tt"></div>
-      <div class="tt-embed" id="tt-embed"></div>
+      <div class="tt-layout">
+        <aside class="cap cap-side">
+          <img class="av" alt="">
+          <h3 id="tt-handle"></h3>
+          <p>Los reels más recientes, directo desde TikTok.</p>
+          <a class="btn primary" id="btn-tt" target="_blank" rel="noopener">Seguir en TikTok</a>
+        </aside>
+        <div class="tt-cap"><div class="tt-embed" id="tt-embed"></div></div>
+      </div>
     </section>
-    <section class="row about" id="contacto">
-      <div class="about-box">
-        <h2>Sobre DANY-USH</h2>
-        <p id="bio"></p>
-        <div class="redes" id="redes"></div>
-        <div class="about-actions">
-          <a class="btn primary" id="btn-mail" hidden>Marcas y colaboraciones</a>
-          <a class="btn" id="btn-donar" target="_blank" rel="noopener" hidden></a>
+
+    <section class="row" id="contacto">
+      <div class="row-head"><h2>Comunidad y contacto</h2></div>
+      <div class="bento" id="bento">
+        <article class="cap cap-about"><h3>Sobre DANY-USH</h3><p id="bio"></p></article>
+        <a class="cap cap-discord" id="cap-discord" target="_blank" rel="noopener" hidden>
+          <b>Sumate al Discord</b><span>Charlá con la comunidad y enterate de los directos.</span><em>Entrar al servidor</em>
+        </a>
+        <article class="cap cap-redes"><h3>Seguime</h3><div class="redes" id="redes"></div></article>
+        <div class="duo">
+          <article class="cap" id="cap-donar" hidden><h3>Apoyá el canal</h3><p>Tu aporte ayuda a seguir haciendo más contenido.</p><a class="btn primary" id="btn-donar" target="_blank" rel="noopener"></a></article>
+          <article class="cap" id="cap-mail" hidden><h3>Marcas y colaboraciones</h3><p>Escribime y armamos algo juntos.</p><a class="btn primary" id="btn-mail">Escribir por mail</a></article>
         </div>
       </div>
     </section>

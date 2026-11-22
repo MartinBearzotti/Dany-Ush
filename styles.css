@@ -172,3 +172,58 @@ dialog[open]{animation:abrir .3s cubic-bezier(.2,.8,.2,1)}
 .hero-poster.entra{animation:entrada .65s cubic-bezier(.2,.8,.2,1)}
 @keyframes entrada{from{opacity:.3;transform:scale(1.035)}}
 .badge.kick{background:#53fc18;color:#0b0415}.badge.youtube{background:#ff2d2d;color:#fff}.badge.tiktok{background:#fff;color:#0b0415}
+
+/* ===== de YouTube para abajo: paneles y cápsulas ===== */
+[hidden]{display:none!important}
+.row-head h2{display:flex;align-items:center;gap:12px}
+.row-head h2::before{content:"";width:10px;height:28px;border-radius:99px;background:linear-gradient(var(--violet),var(--magenta))}
+.panel.yt h2::before{background:#ff2d2d}.panel.tt h2::before{background:linear-gradient(var(--cyan),var(--magenta))}
+.row-head>a{padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);text-decoration:none;font-weight:700;font-size:.9rem;transition:.2s}
+.row-head>a:hover{border-color:var(--violet);background:var(--surface2);text-decoration:none}
+.panel{--c:var(--violet);padding:clamp(18px,3vw,32px);border-radius:36px;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(29,15,56,.75),rgba(21,10,40,.55));box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 50px 90px -60px var(--c)}
+.panel.yt{--c:#ff2d2d}.panel.tt{--c:var(--cyan)}
+
+.cap{position:relative;padding:26px;border-radius:30px;border:1px solid transparent;
+  background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(135deg,rgba(139,92,246,.7),rgba(217,70,239,.25)) border-box}
+.cap h3{font-family:var(--display);font-weight:500;font-size:1.1rem;margin-bottom:10px}
+.cap p{color:var(--muted);line-height:1.55}
+.cap-side{display:flex;flex-direction:column;gap:12px;justify-content:center;align-items:flex-start}
+.cap-side .av{width:76px;height:76px;object-fit:contain;filter:drop-shadow(0 8px 22px rgba(139,92,246,.7))}
+.cap-side h3{margin:0}.cap-side p{margin-bottom:6px}
+.yt-layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px;align-items:stretch}
+.yt-layout .rail{padding:4px;align-items:center}
+.rail:has(iframe.lista){overflow:visible}
+.rail iframe.lista{width:100%;border-radius:28px;box-shadow:0 0 0 2px #ff2d2d,0 30px 70px -30px #ff2d2d}
+.tt-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:22px;align-items:stretch;margin-top:8px}
+.tt-cap{padding:8px;border-radius:34px;background:linear-gradient(135deg,var(--cyan),var(--magenta),var(--violet));box-shadow:0 30px 70px -36px var(--magenta);display:flex}
+.tt-cap .tt-embed{flex:1;margin:0;border-radius:27px;overflow:hidden;background:#fff;min-height:260px;align-items:center}
+.tt-cap blockquote{margin:0!important}
+
+.bento{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cap-about{grid-column:span 2}.sin-discord .cap-about{grid-column:1/-1}
+.cap-about p{font-size:1.1rem;max-width:52ch}
+.cap-discord{grid-row:span 2;display:flex;flex-direction:column;justify-content:space-between;gap:16px;text-decoration:none;color:#fff;
+  background:linear-gradient(135deg,#5865f2,#7c3aed)!important;border:0;transition:transform .25s,box-shadow .25s}
+.cap-discord:hover{transform:translateY(-6px);box-shadow:0 30px 60px -24px #5865f2}
+.cap-discord b{font-family:var(--display);font-weight:800;font-size:1.5rem;line-height:1.15}
+.cap-discord span{opacity:.9}
+.cap-discord em{align-self:flex-start;font-style:normal;font-weight:800;padding:10px 18px;border-radius:999px;background:#fff;color:#3b3fd1}
+.cap-redes{grid-column:span 2}
+.redes{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-start;margin:0}
+.social{display:inline-flex;align-items:center;gap:10px;padding:11px 20px 11px 14px;border-radius:999px;border:1px solid var(--line);
+  background:var(--surface2);color:var(--text);font-weight:700;text-decoration:none;transition:transform .2s,border-color .2s,box-shadow .2s}
+.social i{width:14px;height:14px;border-radius:50%;background:var(--c);box-shadow:0 0 14px var(--c)}
+.social:hover{transform:translateY(-3px);border-color:var(--c);box-shadow:0 14px 30px -14px var(--c)}
+.duo{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.duo:empty{display:none}
+.duo .cap{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.duo .btn{margin-top:8px}
+.sin-discord .cap-redes{grid-column:1/-1}
+
+@media (max-width:900px){
+  .yt-layout,.tt-layout{grid-template-columns:1fr}
+  .bento{grid-template-columns:1fr}
+  .cap-about,.cap-redes,.cap-discord{grid-column:auto;grid-row:auto}
+  .panel{border-radius:28px}
+}
