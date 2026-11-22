@@ -583,17 +583,16 @@ if (d.approximate_member_count) c.querySelector("span").textContent = `${d.appro
 if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; $("#cap-mail").hidden = false; }
 
 (() => {
-  const D = CONFIG.donar, mp = $("#btn-mp"), ca = $("#btn-cafecito"), pp = $("#btn-paypal"), al = $("#donar-alias");
-  $("#cap-donar").hidden = false; // siempre visible; los botones sin dato quedan apagados ("Próximamente")
-  const apagar = (b) => { b.classList.add("off"); b.title = "Próximamente"; };
-  if (D.cafecito) ca.href = D.cafecito; else apagar(ca);
-  if (D.paypal) pp.href = D.paypal; else apagar(pp);
-  if (D.alias) {
-    mp.addEventListener("click", async () => {
-      al.hidden = false; al.innerHTML = "Alias: <b></b>"; al.querySelector("b").textContent = D.alias;
-      try { await navigator.clipboard.writeText(D.alias); mp.textContent = "¡Alias copiado!"; setTimeout(() => (mp.textContent = "Mercado Pago"), 2000); } catch (_) {}
-    });
-  } else apagar(mp);
+  const D = CONFIG.donar, al = $("#donar-alias");
+  $("#cap-donar").hidden = false;
+  const pronto = () => { al.hidden = false; al.textContent = "Este medio de apoyo va a estar disponible muy pronto."; };
+  $("#btn-mp").addEventListener("click", async () => {
+    if (!D.alias) return pronto();
+    let ok = false; try { await navigator.clipboard.writeText(D.alias); ok = true; } catch (_) {}
+    al.hidden = false; al.innerHTML = "Alias: <b></b>" + (ok ? " · ¡copiado!" : ""); al.querySelector("b").textContent = D.alias;
+  });
+  [["#btn-cafecito", D.cafecito], ["#btn-paypal", D.paypal]].forEach(([sel, url]) =>
+    $(sel).addEventListener("click", () => (url ? window.open(url, "_blank", "noopener") : pronto())));
 })();
 
 
