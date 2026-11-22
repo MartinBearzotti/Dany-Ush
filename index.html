@@ -38,11 +38,11 @@
   </div>
   <header class="top">
     <a class="logo" href="#"><img src="/logo-v2.png" alt=""><span>DANY-USH</span></a>
+    <button class="live-pill" id="live-pill" type="button" hidden aria-label="Estoy en vivo, ver directo"><span class="live-dot"></span>EN VIVO</button>
     <nav>
       <a href="#kick" style="--c:#53fc18"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#53fc18"/><path d="M6.5 5.5h3.2v4.1l3.5-4.1h3.9l-4.1 4.8 4.4 6.7h-3.9l-2.7-4.3-1.1 1.2v3.1H6.5z" fill="#0b0b0b"/></svg>Kick</a>
       <a href="#youtube" style="--c:#ff2d2d"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="4.5" width="22" height="15" rx="4.5" fill="#ff0000"/><path d="M10 8.8v6.4l5.6-3.2z" fill="#fff"/></svg>YouTube</a>
       <a href="#tiktok" style="--c:#22d3ee"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#0b0b0b" stroke="#2e1a52" stroke-width=".8"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#25f4ee" transform="translate(-.8 .6)"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#fe2c55" transform="translate(.8 -.5)"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#fff"/></svg>TikTok</a>
-      <a href="#info" style="--c:#8b5cf6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>Info</a>
       <a href="#contacto" style="--c:#d946ef"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.3-9.6C1.5 8 3.6 5 6.8 5c2 0 3.6 1.1 5.2 3.2C13.6 6.1 15.2 5 17.2 5c3.2 0 5.3 3 4.1 6.4C19.5 16.4 12 21 12 21z"/></svg>Sumate</a>
     </nav>
   </header>
@@ -147,12 +147,12 @@
       </div>
     </section>
     
-    <section class="row" id="canal">
+    <section class="row" id="canal" hidden>
       <div class="row-head"><h2>Qué hago en el canal</h2></div>
       <div class="canal-grid" id="canal-grid"></div>
     </section>
 
-    <section class="row" id="info">
+    <section class="row" id="info" hidden>
       <div class="row-head"><h2>Horarios y Setup</h2></div>
       <div class="info-grid">
         <div class="info-card">
@@ -249,5 +249,24 @@
   </dialog>
 
   <script src="app.js"></script>
+  <script>
+  (() => {
+    const nav = document.querySelector("header.top nav"), kick = document.getElementById("kick");
+    const alTope = () => kick.getBoundingClientRect().top > innerHeight * 0.55;
+    const limpiar = () => { if (alTope()) nav.querySelectorAll("a.activo").forEach((a) => a.classList.remove("activo")); };
+    new MutationObserver(limpiar).observe(nav, { subtree: true, attributes: true, attributeFilter: ["class"] });
+    addEventListener("scroll", limpiar, { passive: true });
+    addEventListener("resize", limpiar);
+    limpiar();
+
+    const bar = document.getElementById("livebar"), pill = document.getElementById("live-pill");
+    const sync = () => { pill.hidden = bar.hidden || getComputedStyle(bar).display === "none"; };
+    const mo = new MutationObserver(sync);
+    mo.observe(bar, { attributes: true, attributeFilter: ["hidden", "style", "class"] });
+    mo.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    pill.addEventListener("click", () => document.getElementById("livebar-btn")?.click());
+    sync();
+  })();
+  </script>
 </body>
 </html>
