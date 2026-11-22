@@ -255,3 +255,6 @@ dialog[open]{animation:abrir .3s cubic-bezier(.2,.8,.2,1)}
 .lista-horarios,.lista-setup{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px}
 .lista-horarios li,.lista-setup li{display:flex;justify-content:space-between;gap:12px;padding:8px 12px;border-radius:10px;background:var(--surface2);font-size:.92rem}
 .lista-horarios span,.lista-setup span{color:var(--muted)}
+
+/* redes / donar sin link todavía */
+.social.off,.btn.off{opacity:.45;cursor:default;pointer-events:none}

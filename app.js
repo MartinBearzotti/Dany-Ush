@@ -16,6 +16,10 @@ redes: [ // los que tengan url se muestran
 
 { nombre: "Instagram", url: "" },
 
+{ nombre: "Facebook", url: "" },
+
+{ nombre: "X", url: "" }, // Twitter
+
 { nombre: "Discord", url: "https://discord.gg/bghCDSQVdm" },
 
 { nombre: "WhatsApp", url: "" },
@@ -466,15 +470,15 @@ $("#tt-handle").textContent = `@${CONFIG.tiktok}`;
 
 document.querySelectorAll(".av").forEach((i) => (i.src = document.querySelector(".hero-logo").src));
 
-const COLOR = { Kick: "#53fc18", YouTube: "#ff2d2d", TikTok: "#22d3ee", Discord: "#5865f2", Instagram: "#e1306c", WhatsApp: "#25d366", X: "#ffffff", Twitch: "#9146ff" };
+const COLOR = { Kick: "#53fc18", YouTube: "#ff2d2d", TikTok: "#22d3ee", Discord: "#5865f2", Instagram: "#e1306c", Facebook: "#1877f2", WhatsApp: "#25d366", X: "#ffffff", Twitch: "#9146ff" };
 
 [{ nombre: "Kick", url: kickUrl }, { nombre: "YouTube", url: CONFIG.youtubeCanal }, { nombre: "TikTok", url: ttUrl },
 
-...CONFIG.redes.filter((r) => r.url && r.nombre !== "Discord")].forEach((r) => {
+...CONFIG.redes.filter((r) => r.nombre !== "Discord")].forEach((r) => {
 
 const l = document.createElement("a");
 
-l.className = "social"; l.href = r.url; l.target = "_blank"; l.rel = "noopener";
+l.className = "social"; if (r.url) { l.href = r.url; l.target = "_blank"; l.rel = "noopener"; } else { l.classList.add("off"); l.title = "Próximamente"; }
 
 l.style.setProperty("--c", COLOR[r.nombre] || "#8b5cf6");
 
@@ -488,7 +492,7 @@ if (dc) { const c = $("#cap-discord"); c.href = dc.url; c.hidden = false; } else
 
 if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; $("#cap-mail").hidden = false; }
 
-if (CONFIG.donar.url) { const d = $("#btn-donar"); d.href = CONFIG.donar.url; d.textContent = CONFIG.donar.texto; $("#cap-donar").hidden = false; }
+{ const d = $("#btn-donar"); $("#cap-donar").hidden = false; if (CONFIG.donar.url) { d.href = CONFIG.donar.url; d.textContent = CONFIG.donar.texto; } else { d.textContent = "Próximamente"; d.classList.add("off"); } }
 
 
 
