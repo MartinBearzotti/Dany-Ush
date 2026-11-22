@@ -39,7 +39,6 @@
   <header class="top">
     <a class="logo" href="#"><img src="/logo-v2.png" alt=""><span>DANY-USH</span></a>
     <nav>
-      <a href="#ultimo" style="--c:#c4a1ff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Lo último</a>
       <a href="#kick" style="--c:#53fc18"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#53fc18"/><path d="M6.5 5.5h3.2v4.1l3.5-4.1h3.9l-4.1 4.8 4.4 6.7h-3.9l-2.7-4.3-1.1 1.2v3.1H6.5z" fill="#0b0b0b"/></svg>Kick</a>
       <a href="#youtube" style="--c:#ff2d2d"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="4.5" width="22" height="15" rx="4.5" fill="#ff0000"/><path d="M10 8.8v6.4l5.6-3.2z" fill="#fff"/></svg>YouTube</a>
       <a href="#tiktok" style="--c:#22d3ee"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#0b0b0b" stroke="#2e1a52" stroke-width=".8"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#25f4ee" transform="translate(-.8 .6)"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#fe2c55" transform="translate(.8 -.5)"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#fff"/></svg>TikTok</a>
@@ -87,32 +86,41 @@
       </div>
     </section>
 
-    <section class="row" id="ultimo">
+    <section class="row panel kick" id="kick">
       <div class="row-head">
-        <h2>Lo último</h2>
-        <div class="filtros-wrap">
-          <input class="buscador" id="buscar" type="search" placeholder="Buscar video o clip..." aria-label="Buscar contenido">
-          <div class="chips" id="chips"></div>
+        <h2>Directos y Clips de Kick</h2>
+        <div class="head-actions">
+          <button class="nav-btn" data-target="rail-kick" data-dir="-1" type="button" aria-label="Anterior">‹</button>
+          <button class="nav-btn" data-target="rail-kick" data-dir="1" type="button" aria-label="Siguiente">›</button>
+          <a class="pill" id="link-kick2" target="_blank" rel="noopener">Ver canal</a>
         </div>
       </div>
-      <div class="grid" id="grid"></div>
-      <div class="mas-wrap"><button class="btn" id="mas" type="button" hidden>Ver más</button></div>
-    </section>
-
-    <section class="row" id="kick">
-      <div class="row-head"><h2>Kick</h2><a id="link-kick2" target="_blank" rel="noopener">Ver canal</a></div>
-      <h3 class="sub-h">Streams anteriores</h3>
-      <div class="rail" id="rail-kick"></div>
+      <div class="media-layout">
+        <div class="grid-3x2" id="rail-kick"></div>
+        <aside class="cap cap-side">
+          <img class="av" alt="">
+          <h3>Canal de Kick</h3>
+          <p>Streams anteriores y los mejores momentos en vivo de DANY-USH.</p>
+          <a class="btn primary" id="btn-kick" target="_blank" rel="noopener">Seguir en Kick</a>
+        </aside>
+      </div>
       <div id="clips" hidden>
         <h3 class="sub-h">Clips populares <a class="pill" id="link-clips" target="_blank" rel="noopener">Ver todos en Kick</a></h3>
-        <div class="rail" id="rail-clips"></div>
+        <div class="grid-3x2" id="rail-clips"></div>
       </div>
     </section>
 
     <section class="row panel yt" id="youtube">
-      <div class="row-head"><h2>Videos de YouTube</h2><a class="pill" id="link-yt" target="_blank" rel="noopener">Ver canal</a></div>
-      <div class="yt-layout">
-        <div class="rail" id="rail-yt"></div>
+      <div class="row-head">
+        <h2>Videos de YouTube</h2>
+        <div class="head-actions">
+          <button class="nav-btn" data-target="rail-yt" data-dir="-1" type="button" aria-label="Anterior">‹</button>
+          <button class="nav-btn" data-target="rail-yt" data-dir="1" type="button" aria-label="Siguiente">›</button>
+          <a class="pill" id="link-yt" target="_blank" rel="noopener">Ver canal</a>
+        </div>
+      </div>
+      <div class="media-layout">
+        <div class="grid-3x2" id="rail-yt"></div>
         <aside class="cap cap-side">
           <img class="av" alt="">
           <h3>Canal de YouTube</h3>
@@ -123,19 +131,25 @@
     </section>
 
     <section class="row panel tt" id="tiktok">
-      <div class="row-head"><h2>Reels de TikTok</h2><a class="pill" id="link-tt" target="_blank" rel="noopener">Ver perfil</a></div>
-      <div class="rail" id="rail-tt"></div>
-      <div class="tt-layout">
+      <div class="row-head">
+        <h2>Reels de TikTok</h2>
+        <div class="head-actions">
+          <button class="nav-btn" data-target="rail-tt" data-dir="-1" type="button" aria-label="Anterior">‹</button>
+          <button class="nav-btn" data-target="rail-tt" data-dir="1" type="button" aria-label="Siguiente">›</button>
+          <a class="pill" id="link-tt" target="_blank" rel="noopener">Ver perfil</a>
+        </div>
+      </div>
+      <div class="media-layout">
+        <div class="grid-3x2 tt-grid" id="rail-tt"></div>
         <aside class="cap cap-side">
           <img class="av" alt="">
           <h3 id="tt-handle"></h3>
           <p>Los reels más recientes, directo desde TikTok.</p>
           <a class="btn primary" id="btn-tt" target="_blank" rel="noopener">Seguir en TikTok</a>
         </aside>
-        <div class="tt-cap"><div class="tt-embed" id="tt-embed"></div></div>
       </div>
     </section>
-
+    
     <section class="row" id="canal">
       <div class="row-head"><h2>Qué hago en el canal</h2></div>
       <div class="canal-grid" id="canal-grid"></div>
