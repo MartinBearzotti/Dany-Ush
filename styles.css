@@ -289,3 +289,12 @@ body.live .row{scroll-margin-top:124px}
 .avisos-form input:focus{border-color:var(--violet)}
 .avisos-msg{color:var(--violet-soft)!important;font-weight:700}
 @media (max-width:600px){.livebar #livebar-t{display:none}}
+
+/* logo que guiña el ojo */
+.hero-logo-wrap{position:relative;display:block;width:clamp(96px,11vw,140px);margin:0 0 16px -6px;filter:drop-shadow(0 14px 34px rgba(139,92,246,.75));animation:subir .8s both,flota 6s ease-in-out 1s infinite}
+.hero-logo-wrap .hero-logo{width:100%;height:auto;margin:0;filter:none;animation:none}
+.wink{position:absolute;left:44.8%;top:45.6%;width:21.2%;height:13.6%;border-radius:18% 18% 22% 22%;overflow:hidden;pointer-events:none}
+.wink .lid{position:absolute;inset:0;background:linear-gradient(#fdc19a,#f6a785);clip-path:inset(0 0 100% 0);animation:guino 6s ease-in-out 2.5s infinite}
+.wink .lid::after{content:"";position:absolute;left:12%;right:12%;top:30%;height:34%;border-bottom:max(2px,.9vw) solid #1b0f12;border-radius:0 0 60% 60%/0 0 100% 100%}
+@keyframes guino{0%,86%{clip-path:inset(0 0 100% 0)}90%,95%{clip-path:inset(0 0 0 0)}99%,100%{clip-path:inset(0 0 100% 0)}}
+.hero-logo-wrap:hover .lid{animation-duration:1.4s;animation-delay:0s}
