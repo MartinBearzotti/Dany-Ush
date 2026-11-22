@@ -827,4 +827,25 @@ $("#seg-nota").textContent = visibles.some((k) => !SEG[k]) ? "Suma de las plataf
 
 }
 
+/* ---- Discord: abre la app directo; si no la tiene, abre la web ---- */
+function abrirDiscord(e) {
+  if (!dc) return;
+  e.preventDefault();
+  const code = dc.url.split("/").pop();
+  const web = `https://discord.com/invite/${code}`;
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) { location.href = web; return; } // en el celu abre la app solo
+  let abrio = false;
+  const marcar = () => { abrio = true; };
+  window.addEventListener("blur", marcar, { once: true });
+  document.addEventListener("visibilitychange", marcar, { once: true });
+  location.href = `discord://-/invite/${code}`;
+  setTimeout(() => {
+    window.removeEventListener("blur", marcar);
+    document.removeEventListener("visibilitychange", marcar);
+    if (!abrio) window.open(web, "_blank", "noopener");
+  }, 1800);
+}
+document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
+  .forEach((a) => a.addEventListener("click", abrirDiscord));
+
 Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, n));
