@@ -1,9 +1,14 @@
 // Vercel serverless: lee un feed RSS de TikTok (ej. RSS.app, FetchRSS)
 // Env: TIKTOK_RSS_URL
 export default async function handler(req, res) {
-  const url = process.env.TIKTOK_RSS_URL;
+  const url = process.env.TIKTOK_RSS_URL, user = process.env.TIKTOK_USER || "dany_ushh";
   res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
-  if (!url) return res.status(200).json({ videos: [], aviso: "Falta TIKTOK_RSS_URL" });
+  const extra = {};
+  try { // seguidores: se lee del perfil público (mejor esfuerzo, TikTok puede bloquearlo)
+    const r = await fetch(`https://www.tiktok.com/@${user}`, { headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36", "Accept-Language": "es-AR,es;q=0.9" } });
+    if (r.ok) { const m = (await r.text()).match(/"followerCount":\s*(\d+)/); if (m) extra.seguidores = Number(m[1]); }
+  } catch (_) {}
+  if (!url) return res.status(200).json({ videos: [], ...extra, aviso: "Falta TIKTOK_RSS_URL" });
 
   try {
     const xml = await (await fetch(url)).text();
@@ -29,8 +34,8 @@ export default async function handler(req, res) {
       };
     }).filter((v) => v.id);
 
-    res.status(200).json({ videos });
+    res.status(200).json({ videos, ...extra });
   } catch (_) {
-    res.status(200).json({ videos: [], aviso: "Error al leer RSS de TikTok" });
+    res.status(200).json({ videos: [], ...extra, aviso: "Error al leer RSS de TikTok" });
   }
 }

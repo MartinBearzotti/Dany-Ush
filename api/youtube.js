@@ -35,6 +35,12 @@ export default async function handler(req, res) {
       const l = (d.items || []).find((x) => x.liveStreamingDetails?.actualStartTime && !x.liveStreamingDetails?.actualEndTime);
       if (l) live = l.id;
     }
-    res.status(200).json({ videos, live });
+    let subs = null; // suscriptores (si el canal no los oculta)
+    try {
+      const s = await (await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${ch}&key=${key}`)).json();
+      const st = s.items?.[0]?.statistics;
+      if (st && !st.hiddenSubscriberCount) subs = Number(st.subscriberCount);
+    } catch (_) {}
+    res.status(200).json({ videos, live, subs });
   } catch (e) { res.status(200).json({ videos: [], live: null, aviso: "Error YouTube" }); }
 }

@@ -28,5 +28,9 @@ export default async function handler(req, res) {
       })).filter((x) => x.id);
     }
   } catch (_) {}
+  try { // seguidores: endpoint no oficial, mejor esfuerzo
+    const r = await fetch(`https://kick.com/api/v2/channels/${slug}`, { headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0" } });
+    if (r.ok) { const j = await r.json(); out.seguidores = j.followers_count ?? j.followersCount ?? null; }
+  } catch (_) {}
   res.status(200).json(out);
 }
