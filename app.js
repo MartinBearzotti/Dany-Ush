@@ -34,7 +34,7 @@ youtubeCanal: "https://www.youtube.com/@dany-ush6495",
 
 youtubeId: "UCG7poDcbGtKNc4hAQWBvqpA", // link del canal
 
-tiktok: "danielquiroga64",
+tiktok: "dany_ush_oficial",
 
 // Horario fijo de directos (hora Argentina). dia: 0=domingo ... 6=sábado
 
