@@ -4,7 +4,7 @@ const CONFIG = {
 
 nombre: "DANY-USH",
 
-logo: "/logo.png",
+logo: "/logo-v2.png",
 
 tagline: "Directos, videos y reels en un solo lugar.",
 
@@ -50,7 +50,7 @@ horario: [
 
 // Reels de TikTok a mano (opcional, complementa el perfil embebido)
 
-bannerOffline: "/og.png", // imagen fija cuando Kick está offline
+bannerOffline: "/og-v2.png", // imagen fija cuando Kick está offline
 
 jugando: "El Señor de los Anillos: La Batalla por la Tierra Media",
 

@@ -289,3 +289,8 @@ body.live .row{scroll-margin-top:124px}
 .avisos-form input:focus{border-color:var(--violet)}
 .avisos-msg{color:var(--violet-soft)!important;font-weight:700}
 @media (max-width:600px){.livebar #livebar-t{display:none}}
+
+/* cartel "offline": el play va abajo a la derecha para no tapar el texto de la imagen */
+.hero-poster.offline .play{top:auto;left:auto;right:22px;bottom:18px;margin:0;width:52px;height:52px}
+.hero-poster.offline .play::before{border-width:9px 0 9px 14px}
+.hero-poster.offline{background-size:cover;background-position:center}
