@@ -122,6 +122,10 @@ avisosUrl: "",
 
 discordNombre: "",
 
+// Números a mano por si alguna plataforma no entrega el dato sola (0 = no mostrar). Los automáticos tienen prioridad.
+
+seguidores: { kick: 0, youtube: 0, tiktok: 0, discord: 63 }, // discord: dato real del servidor (se actualiza solo)
+
 tiktokVideos: [
 
 // { id: "7301234567890123456", titulo: "Título", thumb: "img/portada1.jpg" },
@@ -358,7 +362,7 @@ try { d = await (await fetch("/api/kick")).json(); } catch (_) {}
 
 enVivo = !!d.live; KICK = d;
 
-pintarProximo(); pintarLive(); if (d.seguidores) setStat("#st-kick", d.seguidores, "seguidores");
+pintarProximo(); pintarLive(); if (d.seguidores) { setStat("#st-kick", d.seguidores, "seguidores"); setSeg("kick", d.seguidores); }
 
 DATA.kick = (d.vods || []).map((v) => ({ ...v, tipo: "kickvod" }));
 
@@ -374,7 +378,7 @@ try { d = await (await fetch("/api/youtube")).json(); } catch (_) {}
 
 DATA.youtube = (d.videos || []).map((v) => ({ ...v, tipo: "youtube" }));
 
-if (d.subs) setStat("#st-yt", d.subs, "suscriptores");
+if (d.subs) { setStat("#st-yt", d.subs, "suscriptores"); setSeg("youtube", d.subs); }
 
 if (!DATA.youtube.length) { // sin API: lista oficial de reproducción con todos los videos del canal
 
@@ -393,6 +397,8 @@ async function cargarTikTok() {
 let d = { videos: [] };
 
 try { d = await (await fetch("/api/tiktok")).json(); } catch (_) {}
+
+if (d.seguidores) setSeg("tiktok", d.seguidores);
 
 const lista = d.videos?.length ? d.videos : CONFIG.tiktokVideos;
 
@@ -559,6 +565,8 @@ fetch(`https://discord.com/api/v10/invites/${dc.url.split("/").pop()}?with_count
 const g = d.guild; if (!g) return;
 
 if (g.icon) { const i = new Image(); i.className = "dc-icon"; i.alt = ""; i.src = `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png?size=128`; c.prepend(i); }
+
+setSeg("discord", d.approximate_member_count, d.approximate_presence_count ? `${d.approximate_presence_count.toLocaleString("es-AR")} en línea ahora` : "");
 
 let nom = (g.name || "").normalize("NFKC").trim().replace(/\s+/g, " ");
 
@@ -766,3 +774,57 @@ const b = $("#avisos-dc"); b.href = dc.url; b.hidden = false;
 }
 
 })();
+
+
+
+/* ---- Seguidores: cápsulas por plataforma + total ---- */
+
+const SEG = { kick: 0, youtube: 0, tiktok: 0, discord: 0 };
+
+const SEGLINK = { kick: kickUrl, youtube: CONFIG.youtubeCanal, tiktok: ttUrl, discord: dc ? dc.url : "" };
+
+let segPrev = 0;
+
+document.querySelectorAll(".seg").forEach((e) => { const u = SEGLINK[e.dataset.p]; if (u) e.href = u; else e.hidden = true; });
+
+function contar(el, desde, hasta) { // anima el número
+
+if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = hasta.toLocaleString("es-AR"); return; }
+
+const t0 = performance.now(), dur = 1000;
+
+const paso = (t) => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(desde + (hasta - desde) * e).toLocaleString("es-AR"); if (p < 1) requestAnimationFrame(paso); };
+
+requestAnimationFrame(paso);
+
+}
+
+function setSeg(p, n, sub) {
+
+n = Number(n); if (!n) return;
+
+const el = document.querySelector(`.seg[data-p="${p}"]`); if (!el) return;
+
+contar(el.querySelector(".n"), SEG[p], n); SEG[p] = n;
+
+if (sub) { const s = el.querySelector(".seg-sub"); s.textContent = sub; s.hidden = false; }
+
+pintarTotal();
+
+}
+
+function pintarTotal() {
+
+const visibles = Object.keys(SEG).filter((k) => SEGLINK[k]);
+
+const tot = visibles.reduce((x, k) => x + SEG[k], 0);
+
+$("#seg-total-box").hidden = !tot;
+
+contar($("#seg-total"), segPrev, tot); segPrev = tot;
+
+$("#seg-nota").textContent = visibles.some((k) => !SEG[k]) ? "Suma de las plataformas con dato disponible" : "";
+
+}
+
+Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, n));
