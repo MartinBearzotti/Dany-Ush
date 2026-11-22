@@ -162,3 +162,13 @@ dialog[open]{animation:abrir .3s cubic-bezier(.2,.8,.2,1)}
 
 .rail iframe.lista{flex:none;width:min(960px,100%);aspect-ratio:16/9;border:0;border-radius:18px;box-shadow:0 0 0 1px var(--violet),0 24px 60px -24px var(--violet);background:#000}
 .rail:has(iframe.lista){-webkit-mask:none;mask:none}
+
+/* portada rotativa */
+.hero-stage{display:flex;flex-direction:column;gap:18px;min-width:0}
+.dots{display:flex;gap:8px;justify-content:center}
+.dots button{width:10px;height:10px;padding:0;border:0;border-radius:99px;background:var(--line);cursor:pointer;transition:width .35s,background .35s}
+.dots button:hover{background:var(--violet)}
+.dots button[aria-current="true"]{width:32px;background:linear-gradient(90deg,var(--violet),var(--magenta))}
+.hero-poster.entra{animation:entrada .65s cubic-bezier(.2,.8,.2,1)}
+@keyframes entrada{from{opacity:.3;transform:scale(1.035)}}
+.badge.kick{background:#53fc18;color:#0b0415}.badge.youtube{background:#ff2d2d;color:#fff}.badge.tiktok{background:#fff;color:#0b0415}

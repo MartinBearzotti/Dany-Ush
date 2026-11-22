@@ -11,7 +11,7 @@ const CONFIG = {
     { nombre: "WhatsApp", url: "" },
   ],
   donar: { texto: "Invitame un cafecito", url: "" },   // Cafecito / MercadoPago
-  kick: "CAMBIAR-USUARIO-KICK",       // kick.com/USUARIO (el del canal, no el de settings)
+  kick: "danyush",                    // kick.com/USUARIO
   youtubeCanal: "https://www.youtube.com/@dany-ush6495",
   youtubeId: "UCG7poDcbGtKNc4hAQWBvqpA",   // link del canal
   tiktok: "dany_ushh",
@@ -32,6 +32,8 @@ const kickUrl = `https://kick.com/${CONFIG.kick}`, ttUrl = `https://www.tiktok.c
 let enVivo = false;
 const DATA = { kick: [], youtube: [], tiktok: [] };
 let filtro = "todo", visibles = 12, proxT = null;
+let slides = [], idx = 0, timer = null, pausa = false, KICK = { live: false };
+const ETQ = { kick: "Kick", youtube: "YouTube", tiktok: "TikTok" };
 
 document.title = `${CONFIG.nombre} | Directos, videos y reels`;
 $("#nombre").textContent = CONFIG.nombre;
@@ -61,7 +63,11 @@ visor.addEventListener("click", (e) => { if (e.target === visor) visor.close(); 
 $("#cerrar").addEventListener("click", () => visor.close());
 const abrirKick = () => abrir("kick", CONFIG.kick, `Directo de ${CONFIG.nombre}`);
 $("#btn-directo").addEventListener("click", abrirKick);
-$("#poster-kick").addEventListener("click", abrirKick);
+$("#poster-kick").addEventListener("click", () => {
+  const s = slides[idx];
+  if (!s || s.tipo === "kick") return abrirKick();
+  abrir(s.tipo, s.id, s.titulo);
+});
 
 /* ---- portadas ---- */
 const fmt = (f) => (f ? new Date(f).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) : "");
@@ -118,13 +124,7 @@ setInterval(pintarProximo, 30000);
 async function cargarKick() {
   let d = { live: false, vods: [] };
   try { d = await (await fetch("/api/kick")).json(); } catch (_) {}
-  enVivo = !!d.live;
-  const badge = $("#badge-kick");
-  if (enVivo) {
-    badge.className = "badge live"; badge.textContent = `EN VIVO${d.viewers ? " · " + d.viewers : ""}`;
-    $("#titulo-kick").textContent = d.titulo || "Directo en Kick";
-    if (d.thumb) $("#poster-kick").style.backgroundImage = `url("${d.thumb}")`;
-  } else { $("#poster-kick").classList.add("offline"); $("#titulo-kick").textContent = "Directo en Kick: ahora offline"; }
+  enVivo = !!d.live; KICK = d;
   pintarProximo();
   DATA.kick = (d.vods || []).map((v) => ({ ...v, tipo: "kickvod" }));
   fila($("#rail-kick"), DATA.kick, "med", "Próximamente"); pintarUltimo();
@@ -142,6 +142,14 @@ async function cargarYouTube() {
 function cargarTikTok() {
   DATA.tiktok = CONFIG.tiktokVideos.map((v) => ({ ...v, tipo: "tiktok" }));
   fila($("#rail-tt"), DATA.tiktok, "tall", "Próximamente"); pintarUltimo();
+  DATA.tiktok.forEach(async (v) => {
+    if (v.thumb) return;
+    try {
+      const r = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(`https://www.tiktok.com/@${CONFIG.tiktok}/video/${v.id}`)}`);
+      v.thumb = (await r.json()).thumbnail_url;
+      if (v.thumb) { fila($("#rail-tt"), DATA.tiktok, "tall", "Próximamente"); pintarUltimo(); }
+    } catch (_) {}
+  });
   if (!CONFIG.tiktokVideos.length) $("#rail-tt").hidden = true;
   $("#tt-embed").innerHTML = `<blockquote class="tiktok-embed" cite="${ttUrl}" data-unique-id="${CONFIG.tiktok}" data-embed-type="creator" style="max-width:780px;min-width:288px;"><section><a target="_blank" rel="noopener" href="${ttUrl}?refer=creator_embed">@${CONFIG.tiktok}</a></section></blockquote>`;
   const s = document.createElement("script"); s.async = true; s.src = "https://www.tiktok.com/embed.js"; document.body.append(s);
@@ -185,6 +193,7 @@ function pintarUltimo() {
     t.className = `plat ${v.plat}`; t.textContent = PLAT[v.plat]; p.append(t); g.append(p);
   });
   $("#mas").hidden = todos.length <= visibles;
+  armarSlides();
 }
 
 /* ---- Sobre mí, redes, donaciones, mail ---- */
@@ -195,3 +204,45 @@ CONFIG.redes.filter((r) => r.url).forEach((r) => {
 if (CONFIG.email) { const m = $("#btn-mail"); m.href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; m.hidden = false; }
 if (CONFIG.donar.url) { const d = $("#btn-donar"); d.href = CONFIG.donar.url; d.textContent = CONFIG.donar.texto; d.hidden = false; }
 if (!CONFIG.email && !CONFIG.donar.url && !CONFIG.redes.some((r) => r.url)) $("#contacto").classList.add("sin-datos");
+
+/* ---- Portada principal rotativa: Kick, YouTube, TikTok ---- */
+function armarSlides() {
+  const k = { tipo: "kick", id: CONFIG.kick, plat: "kick", vivo: !!KICK.live,
+    titulo: KICK.live ? (KICK.titulo || "Directo en Kick") : "Directo en Kick: ahora offline", thumb: KICK.live ? KICK.thumb : "" };
+  const listas = [[k], DATA.youtube.slice(0, 3).map((v) => ({ ...v, plat: "youtube" })),
+    DATA.tiktok.slice(0, 3).map((v) => ({ ...v, plat: "tiktok" })), DATA.kick.slice(0, 2).map((v) => ({ ...v, plat: "kick" }))];
+  slides = [];
+  for (let i = 0; i < 3; i++) listas.forEach((l) => l[i] && slides.push(l[i]));
+  if (idx >= slides.length) idx = 0;
+  const dots = $("#dots");
+  dots.innerHTML = "";
+  slides.forEach((s, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.setAttribute("aria-label", `Ver: ${s.titulo}`);
+    b.addEventListener("click", () => { mostrar(i, true); iniciarRotacion(); });
+    dots.append(b);
+  });
+  dots.hidden = slides.length < 2;
+  mostrar(idx, false);
+}
+function mostrar(i, anim) {
+  const s = slides[i]; if (!s) return;
+  idx = i;
+  const p = $("#poster-kick"), b = $("#badge-kick");
+  p.style.backgroundImage = s.thumb ? `url("${s.thumb}")` : "";
+  p.classList.toggle("offline", s.tipo === "kick" && !s.vivo);
+  b.className = "badge " + (s.vivo ? "live" : s.plat);
+  b.textContent = s.vivo ? `EN VIVO${KICK.viewers ? " · " + KICK.viewers : ""}` : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : "");
+  $("#titulo-kick").textContent = s.titulo || "";
+  $("#dots").querySelectorAll("button").forEach((d, n) => d.setAttribute("aria-current", n === i));
+  if (anim) { p.classList.remove("entra"); void p.offsetWidth; p.classList.add("entra"); }
+}
+function iniciarRotacion() {
+  clearInterval(timer);
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  timer = setInterval(() => { if (slides.length > 1 && !pausa && !visor.open) mostrar((idx + 1) % slides.length, true); }, 5500);
+}
+const stage = $("#stage");
+["mouseenter", "focusin"].forEach((e) => stage.addEventListener(e, () => (pausa = true)));
+["mouseleave", "focusout"].forEach((e) => stage.addEventListener(e, () => (pausa = false)));
+iniciarRotacion();
