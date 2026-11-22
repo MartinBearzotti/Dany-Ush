@@ -59,10 +59,7 @@
         <div class="proximo" id="proximo"></div>
         <div class="hero-actions">
           <button class="btn primary" id="btn-directo" type="button">Ver el directo</button>
-          <div class="seguime" id="seguime">
-            <button class="btn" id="seguime-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="seguime-menu">Seguime en <span class="caret" aria-hidden="true">▾</span></button>
-            <div class="seguime-menu" id="seguime-menu" role="menu" hidden></div>
-          </div>
+          <button class="btn" id="seguime-btn" type="button" aria-haspopup="dialog">Seguime en…</button>
         </div>
       </div>
       <div class="hero-stage" id="stage">
@@ -222,6 +219,16 @@
       <a id="f-tt" target="_blank" rel="noopener">TikTok</a>
     </div>
   </footer>
+
+  <dialog id="seguime-modal" aria-labelledby="seguime-titulo">
+    <div class="sg-card">
+      <button class="cerrar sg-cerrar" id="seguime-cerrar" type="button" aria-label="Cerrar">&times;</button>
+      <img class="sg-logo" src="/logo-v2.png" alt="" width="72" height="72">
+      <h2 id="seguime-titulo">Seguime en</h2>
+      <p>Elegí tu red favorita y no te pierdas ningún directo.</p>
+      <div class="sg-grid" id="seguime-menu"></div>
+    </div>
+  </dialog>
 
   <dialog id="visor">
     <div class="visor-bar">

@@ -429,9 +429,9 @@ if (v.thumb) return;
 
 try {
 
-const r = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(`https://www.tiktok.com/@${CONFIG.tiktok}/video/${v.id}`)}`);
+const r = await fetch(`/api/tiktok-thumb?id=${v.id}`);
 
-v.thumb = (await r.json()).thumbnail_url;
+v.thumb = (await r.json()).thumb;
 
 if (v.thumb) { fila($("#rail-tt"), DATA.tiktok, "tall", "Próximamente"); pintarUltimo(); }
 
@@ -873,7 +873,7 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
 /* ---- Menú "Seguime en…": Kick, YouTube, TikTok y las redes de CONFIG.redes, cada una con su logo ---- */
 (() => {
   const ICONOS = {"Kick": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#53fc18\"/><path d=\"M6.5 5.5h3.2v4.1l3.5-4.1h3.9l-4.1 4.8 4.4 6.7h-3.9l-2.7-4.3-1.1 1.2v3.1H6.5z\" fill=\"#0b0b0b\"/></svg>", "YouTube": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"1\" y=\"4.5\" width=\"22\" height=\"15\" rx=\"4.5\" fill=\"#ff0000\"/><path d=\"M10 8.8v6.4l5.6-3.2z\" fill=\"#fff\"/></svg>", "TikTok": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#0b0b0b\"/><path d=\"M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z\" fill=\"#25f4ee\" transform=\"translate(-.8 .6)\"/><path d=\"M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z\" fill=\"#fe2c55\" transform=\"translate(.8 -.5)\"/><path d=\"M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z\" fill=\"#fff\"/></svg>", "Instagram": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><defs><linearGradient id=\"ig\" x1=\"0\" y1=\"1\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#feda75\"/><stop offset=\".35\" stop-color=\"#fa7e1e\"/><stop offset=\".6\" stop-color=\"#d62976\"/><stop offset=\"1\" stop-color=\"#4f5bd5\"/></linearGradient></defs><rect width=\"24\" height=\"24\" rx=\"6.5\" fill=\"url(#ig)\"/><rect x=\"5.2\" y=\"5.2\" width=\"13.6\" height=\"13.6\" rx=\"4\" fill=\"none\" stroke=\"#fff\" stroke-width=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"3.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"1.7\"/><circle cx=\"16.2\" cy=\"7.8\" r=\"1\" fill=\"#fff\"/></svg>", "Facebook": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#1877f2\"/><path d=\"M13.3 19.5v-6.2h2.1l.4-2.5h-2.5V9.3c0-.7.3-1.3 1.4-1.3h1.2V5.8c-.2 0-.9-.1-1.8-.1-2 0-3.2 1.2-3.2 3.3v1.8H8.8v2.5h2.1v6.2z\" fill=\"#fff\"/></svg>", "X": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#0b0b0b\" stroke=\"#444\" stroke-width=\".8\"/><path d=\"M6.2 6h3.2l8.4 12h-3.2z\" fill=\"#fff\"/><path d=\"M17.6 6 6.4 18\" stroke=\"#fff\" stroke-width=\"1.5\" stroke-linecap=\"round\" fill=\"none\"/></svg>", "Discord": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#5865f2\"/><path d=\"M7.6 7.4c1.3-.6 2.9-1 4.4-1s3.1.4 4.4 1c1 1.8 1.6 3.9 1.5 6.5-.9.7-2 1.2-3.2 1.5l-.7-1.1c-.5.1-1 .2-2 .2s-1.500-.1-2-.2l-.7 1.100c-1.200-.3-2.300-.8-3.200-1.500-.1-2.600.5-4.700 1.500-6.500z\" fill=\"#fff\"/><circle cx=\"9.600\" cy=\"12\" r=\"1.200\" fill=\"#5865f2\"/><circle cx=\"14.400\" cy=\"12\" r=\"1.200\" fill=\"#5865f2\"/></svg>", "WhatsApp": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#25d366\"/><path d=\"M12 5.2a6.800 6.800 0 0 0-5.800 10.300L5.300 18.800l3.400-.9A6.800 6.800 0 1 0 12 5.200z\" fill=\"none\" stroke=\"#fff\" stroke-width=\"1.500\" stroke-linejoin=\"round\"/><path d=\"M9.600 8.900c.2-.4.6-.4.9-.3l.7 1.500-.5.7c.5 1 1.300 1.800 2.300 2.300l.7-.5 1.500.7c.1.3.1.7-.3.9-1 .6-2.300.3-3.400-.5S9 10.100 9.600 8.900z\" fill=\"#fff\"/></svg>", "Twitch": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#9146ff\"/><path d=\"M6 5.500h12.500v8.200l-3 3h-3l-2 2v-2H6z\" fill=\"#fff\"/><path d=\"M13.200 8.300v3.300M16 8.300v3.300\" stroke=\"#9146ff\" stroke-width=\"1.400\" stroke-linecap=\"round\"/></svg>"};
-  const btn = $("#seguime-btn"), menu = $("#seguime-menu"), cont = $("#seguime");
+  const btn = $("#seguime-btn"), menu = $("#seguime-menu"), modal = $("#seguime-modal");
   [{ nombre: "Kick", url: kickUrl }, { nombre: "YouTube", url: CONFIG.youtubeCanal }, { nombre: "TikTok", url: ttUrl }, ...CONFIG.redes].forEach((r) => {
     const a = document.createElement(r.url ? "a" : "span");
     a.className = "seguime-item" + (r.url ? "" : " off"); a.setAttribute("role", "menuitem");
@@ -882,18 +882,9 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
     if (r.nombre === "Discord" && r.url) a.addEventListener("click", abrirDiscord); // Discord abre la app directo
     menu.append(a);
   });
-  const cerrar = () => { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); };
-  btn.addEventListener("click", () => {
-    const abrir = menu.hidden; menu.hidden = !abrir; btn.setAttribute("aria-expanded", String(abrir));
-    if (abrir) { // si abajo no hay lugar, el menu se abre hacia arriba (nunca queda cortado)
-      menu.classList.remove("sube");
-      const r = menu.getBoundingClientRect();
-      if (r.bottom > innerHeight - 12 && btn.getBoundingClientRect().top > r.height + 80) menu.classList.add("sube");
-    }
-  });
-  menu.addEventListener("click", (e) => { if (e.target.closest("a")) cerrar(); });
-  document.addEventListener("click", (e) => { if (!cont.contains(e.target)) cerrar(); });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { cerrar(); btn.focus(); } });
+  btn.addEventListener("click", () => modal.showModal()); // ventana flotante en el centro
+  $("#seguime-cerrar").addEventListener("click", () => modal.close());
+  modal.addEventListener("click", (e) => { if (e.target === modal || e.target.closest("a")) modal.close(); }); // click afuera o en una red
 })();
 
 /* ---- Extras "wow": palabra que se escribe sola, brillo que sigue al mouse, barra de scroll, volver arriba y menú activo ---- */

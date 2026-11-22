@@ -327,12 +327,6 @@ body.live .row{scroll-margin-top:124px}
 .donar-b.pp{background:linear-gradient(135deg,#0070ba,#003087);box-shadow:0 10px 30px -12px #0070ba}
 .donar-b:hover{transform:translateY(-3px)}
 .hero-actions{position:relative;z-index:20}
-.seguime{position:relative;display:inline-block}
-.seguime .caret{display:inline-block;margin-left:4px;transition:transform .2s}
-.seguime #seguime-btn[aria-expanded="true"] .caret{transform:rotate(180deg)}
-.seguime #seguime-btn[aria-expanded="true"]{border-color:var(--violet);box-shadow:0 0 0 3px rgba(139,92,246,.25)}
-.seguime-menu{position:absolute;left:0;top:calc(100% + 10px);z-index:40;width:max-content;min-width:230px;max-width:calc(100vw - 40px);display:flex;flex-direction:column;gap:2px;padding:8px;border-radius:22px;border:1px solid var(--line);background:var(--surface2);box-shadow:0 26px 60px -18px #000,0 0 44px -20px var(--violet);animation:menuIn .18s ease-out}
-@keyframes menuIn{from{opacity:0;transform:translateY(-6px) scale(.98)}}
 .seguime-item{display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border-radius:16px;color:var(--text);text-decoration:none;font-weight:700;transition:background .15s,transform .15s}
 .seguime-item svg{width:28px;height:28px;flex:none}
 a.seguime-item:hover,a.seguime-item:focus-visible{background:rgba(139,92,246,.2);transform:translateX(3px);outline:0}
@@ -366,5 +360,16 @@ nav a::after{background:var(--c,var(--violet))}
 /* el menu fijo nunca tapa los titulos al navegar */
 section[id]{scroll-margin-top:88px}
 /* Seguime en: ventana flotante que no se corta */
-.seguime-menu.sube{top:auto;bottom:calc(100% + 10px)}
-@media (max-width:600px){.seguime-menu{min-width:min(260px,calc(100vw - 40px))}}
+/* ventana flotante "Seguime en" (centro de la pantalla) */
+#seguime-modal{border:0;background:transparent;padding:0;margin:auto;overflow:visible;max-width:100vw;max-height:100dvh;color:var(--text)}
+#seguime-modal::backdrop{background:rgba(8,3,18,.74);backdrop-filter:blur(8px)}
+.sg-card{position:relative;width:min(460px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto;padding:30px 24px 24px;border-radius:32px;text-align:center;border:1px solid var(--violet);background:linear-gradient(160deg,var(--surface2),var(--surface));box-shadow:0 0 0 6px rgba(139,92,246,.12),0 40px 110px -20px rgba(139,92,246,.65)}
+#seguime-modal[open] .sg-card{animation:abrir .22s ease-out}
+.sg-logo{width:72px;height:auto;margin:0 auto 6px;filter:drop-shadow(0 10px 24px rgba(139,92,246,.7));animation:flota 6s ease-in-out infinite}
+.sg-card h2{font-family:var(--display);font-weight:800;font-size:1.7rem}
+.sg-card p{color:var(--muted);margin:4px 0 0}
+.sg-cerrar{position:absolute;top:12px;right:14px}
+.sg-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;text-align:left}
+.sg-grid .seguime-item{padding:12px 14px 12px 12px;border-radius:18px;background:rgba(139,92,246,.1);border:1px solid var(--line)}
+@media (max-width:360px){.sg-grid{grid-template-columns:1fr}}
+section[id]{scroll-margin-top:100px}
