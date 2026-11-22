@@ -139,9 +139,16 @@ async function cargarYouTube() {
   }
   fila($("#rail-yt"), DATA.youtube, "med", "Próximamente"); pintarUltimo();
 }
-function cargarTikTok() {
-  DATA.tiktok = CONFIG.tiktokVideos.map((v) => ({ ...v, tipo: "tiktok" }));
-  fila($("#rail-tt"), DATA.tiktok, "tall", "Próximamente"); pintarUltimo();
+async function cargarTikTok() {
+  let d = { videos: [] };
+  try { d = await (await fetch("/api/tiktok")).json(); } catch (_) {}
+  const lista = d.videos?.length ? d.videos : CONFIG.tiktokVideos;
+  DATA.tiktok = lista.map((v) => ({ ...v, tipo: "tiktok" }));
+  $("#rail-tt").hidden = !DATA.tiktok.length;
+  fila($("#rail-tt"), DATA.tiktok, "tall", "Próximamente");
+  pintarUltimo();
+
+  // Si algún video vino sin miniatura en el RSS, la busca con oEmbed
   DATA.tiktok.forEach(async (v) => {
     if (v.thumb) return;
     try {
@@ -150,7 +157,7 @@ function cargarTikTok() {
       if (v.thumb) { fila($("#rail-tt"), DATA.tiktok, "tall", "Próximamente"); pintarUltimo(); }
     } catch (_) {}
   });
-  if (!CONFIG.tiktokVideos.length) $("#rail-tt").hidden = true;
+
   $("#tt-embed").innerHTML = `<blockquote class="tiktok-embed" cite="${ttUrl}" data-unique-id="${CONFIG.tiktok}" data-embed-type="creator" style="max-width:780px;min-width:288px;"><section><a target="_blank" rel="noopener" href="${ttUrl}?refer=creator_embed">@${CONFIG.tiktok}</a></section></blockquote>`;
   const s = document.createElement("script"); s.async = true; s.src = "https://www.tiktok.com/embed.js"; document.body.append(s);
 }
