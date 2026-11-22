@@ -153,7 +153,9 @@ let enVivo = false;
 
 const DATA = { kick: [], youtube: [], tiktok: [] };
 
-let filtro = "todo", visibles = 12, proxT = null, busqueda = "";
+const CEL = matchMedia("(max-width:560px)").matches, PASO = CEL ? 6 : 12; // en el celu se muestran menos tarjetas por vez
+
+let filtro = "todo", visibles = PASO, proxT = null, busqueda = "";
 
 let slides = [], idx = 0, timer = null, pausa = false, KICK = { live: false };
 
@@ -169,7 +171,7 @@ $("#tagline").textContent = CONFIG.tagline;
 
 $("#foot-name").textContent = `© ${new Date().getFullYear()} ${CONFIG.nombre}`;
 
-[["#link-kick2", kickUrl], ["#f-kick", kickUrl], ["#link-yt", CONFIG.youtubeCanal], ["#btn-yt", CONFIG.youtubeCanal], ["#btn-tt", ttUrl],
+[["#link-kick2", kickUrl], ["#btn-kick", kickUrl], ["#link-clips", `https://kick.com/${CONFIG.kick}/clips`], ["#f-kick", kickUrl], ["#link-yt", CONFIG.youtubeCanal], ["#btn-yt", CONFIG.youtubeCanal], ["#btn-tt", ttUrl],
 
 ["#f-yt", CONFIG.youtubeCanal], ["#link-tt", ttUrl], ["#f-tt", ttUrl]].forEach(([s, u]) => ($(s).href = u));
 
@@ -307,6 +309,7 @@ function fila(rail, items, clase, vacio) {
 rail.innerHTML = "";
 
 if (!items.length) {
+if (rail.classList.contains("kgrid")) return; // Kick: si no hay nada, no se muestran cuadros vacíos
 
 for (let i = 0; i < 4; i++) { const g = document.createElement("div"); g.className = `poster ${clase} ghost`; g.innerHTML = `<span class="poster-title">${vacio}</span>`; rail.append(g); }
 
@@ -314,7 +317,11 @@ return;
 
 }
 
-items.forEach((v) => rail.append(poster(v, clase)));
+items.forEach((v) => {
+const p = poster(v, clase);
+if (rail.classList.contains("kgrid")) { const t = document.createElement("span"); t.className = "plat kick"; t.textContent = v.tipo === "kickclip" ? "Clip" : "Stream"; p.append(t); }
+rail.append(p);
+});
 
 }
 
@@ -394,10 +401,15 @@ pintarProximo(); pintarLive(); if (d.seguidores) { setStat("#st-kick", d.seguido
 
 DATA.kick = (d.vods || []).map((v) => ({ ...v, tipo: "kickvod" }));
 
-fila($("#rail-kick"), DATA.kick.slice(0, 8), "med", "Próximamente"); pintarUltimo();
+fila($("#rail-kick"), DATA.kick.slice(0, 6), "med", "Próximamente"); ajustarKick(); pintarUltimo();
 
 }
 
+// Kick: streams + clips suman como máximo 12 tarjetas (12 cierra parejo en 2, 3 y 4 columnas); se recortan clips del final
+function ajustarKick() {
+const c = $("#rail-clips"), s = $("#rail-kick").querySelectorAll(".poster").length;
+while (c.querySelector(".poster") && s + c.querySelectorAll(".poster").length > (CEL ? 6 : 12)) c.lastElementChild.remove();
+}
 // Kick: streams y clips en grilla (no en carrusel), así con pocos videos no queda un hueco enorme
 $("#rail-kick").classList.add("kgrid"); $("#rail-clips").classList.add("kgrid");
 
@@ -473,7 +485,7 @@ if ("IntersectionObserver" in window) { const o = new IntersectionObserver((en) 
 
 $("#grid").innerHTML = Array(6).fill('<div class="poster med skel"></div>').join("");
 
-$("#buscar").addEventListener("input", (e) => { busqueda = e.target.value.trim().toLowerCase(); visibles = 12; pintarUltimo(); });
+$("#buscar").addEventListener("input", (e) => { busqueda = e.target.value.trim().toLowerCase(); visibles = PASO; pintarUltimo(); });
 
 pintarProximo(); cargarKick(); cargarYouTube(); cargarTikTok();
 
@@ -517,7 +529,7 @@ b.type = "button"; b.className = "chip"; b.textContent = n; b.setAttribute("aria
 
 b.addEventListener("click", () => {
 
-filtro = k; visibles = 12;
+filtro = k; visibles = PASO;
 
 chips.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", c === b));
 
@@ -529,7 +541,7 @@ chips.append(b);
 
 });
 
-$("#mas").addEventListener("click", () => { visibles += 12; pintarUltimo(); });
+$("#mas").addEventListener("click", () => { visibles += PASO; pintarUltimo(); });
 
 function pintarUltimo() {
 
@@ -551,9 +563,6 @@ t.className = `plat ${v.plat}`; t.textContent = PLAT[v.plat]; p.append(t); g.app
 
 });
 
-// la tarjeta grande solo cuando hay varios videos; con 1 o 2 se ven todas del mismo tamaño
-const primera = g.firstElementChild;
-if (primera && Math.min(todos.length, visibles) >= 3) primera.classList.add("destaca");
 
 $("#mas").hidden = todos.length <= visibles;
 
@@ -619,7 +628,8 @@ if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colabo
 
 (() => {
   const D = CONFIG.donar, al = $("#donar-alias");
-  $("#cap-donar").hidden = false;
+  $("#cap-donar").hidden = !(D.alias || D.cafecito || D.paypal); // sin ningún medio cargado, la tarjeta no se muestra
+  $("#btn-mp").hidden = !D.alias; $("#btn-cafecito").hidden = !D.cafecito; $("#btn-paypal").hidden = !D.paypal;
   const pronto = () => { al.hidden = false; al.textContent = "Este medio de apoyo va a estar disponible muy pronto."; };
   $("#btn-mp").addEventListener("click", async () => {
     if (!D.alias) return pronto();
@@ -725,7 +735,7 @@ $("#lista-horarios").innerHTML = CONFIG.horario
 
 .map((h) => `<li><b>${DIAS[h.dia]}</b><span>${h.hora} h (ARG)</span></li>`).join("");
 
-$("#lista-setup").innerHTML = CONFIG.setup
+$("#lista-setup").innerHTML = CONFIG.setup.filter((s) => !/completar/i.test(s.valor))
 
 .map((s) => `<li><span>${s.item}</span><b>${s.valor}</b></li>`).join("");
 
@@ -980,6 +990,6 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
     $("#rail-clips").innerHTML = `<a class="kick-cta" href="${clipsUrl}" target="_blank" rel="noopener"><b>Mirá los clips en Kick</b><span>Los mejores momentos del canal, ordenados por más vistos.</span><em>Ver clips</em></a>`;
     return;
   }
-  fila($("#rail-clips"), [...CLIPS, ...auto].slice(0, 12), "med", "");
+  fila($("#rail-clips"), [...CLIPS, ...auto].slice(0, 12), "med", ""); ajustarKick();
 })();
 
