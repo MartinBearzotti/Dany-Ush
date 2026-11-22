@@ -38,19 +38,31 @@
   </div>
   <header class="top">
     <a class="logo" href="#"><img src="/logo-v2.png" alt=""><span>DANY-USH</span></a>
-    <nav><a href="#ultimo">Lo último</a><a href="#kick">Kick</a><a href="#youtube">YouTube</a><a href="#tiktok">TikTok</a><a href="#info">Info</a><a href="#contacto">Contacto</a></nav>
+    <nav>
+      <a href="#ultimo" style="--c:#c4a1ff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Lo último</a>
+      <a href="#kick" style="--c:#53fc18"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#53fc18"/><path d="M6.5 5.5h3.2v4.1l3.5-4.1h3.9l-4.1 4.8 4.4 6.7h-3.9l-2.7-4.3-1.1 1.2v3.1H6.5z" fill="#0b0b0b"/></svg>Kick</a>
+      <a href="#youtube" style="--c:#ff2d2d"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="4.5" width="22" height="15" rx="4.5" fill="#ff0000"/><path d="M10 8.8v6.4l5.6-3.2z" fill="#fff"/></svg>YouTube</a>
+      <a href="#tiktok" style="--c:#22d3ee"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#0b0b0b" stroke="#2e1a52" stroke-width=".8"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#25f4ee" transform="translate(-.8 .6)"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#fe2c55" transform="translate(.8 -.5)"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#fff"/></svg>TikTok</a>
+      <a href="#info" style="--c:#8b5cf6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></svg>Info</a>
+      <a href="#contacto" style="--c:#d946ef"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></svg>Contacto</a>
+    </nav>
   </header>
 
   <main>
     <section class="hero">
       <div class="hero-text">
-        <img class="hero-logo" src="/logo-v2.png" alt="Logo de DANY-USH" width="140" height="140" decoding="async">
-        <h1 id="nombre"></h1>
+        <div class="hero-id">
+          <img class="hero-logo" src="/logo-v2.png" alt="Logo de DANY-USH" width="140" height="140" decoding="async">
+          <h1 id="nombre"></h1>
+        </div>
         <p id="tagline"></p>
         <div class="proximo" id="proximo"></div>
         <div class="hero-actions">
           <button class="btn primary" id="btn-directo" type="button">Ver el directo</button>
-          <a class="btn" id="link-kick" target="_blank" rel="noopener">Seguir en Kick</a>
+          <div class="seguime" id="seguime">
+            <button class="btn" id="seguime-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="seguime-menu">Seguime en <span class="caret" aria-hidden="true">▾</span></button>
+            <div class="seguime-menu" id="seguime-menu" role="menu" hidden></div>
+          </div>
         </div>
       </div>
       <div class="hero-stage" id="stage">

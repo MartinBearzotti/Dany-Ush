@@ -126,10 +126,19 @@ discordNombre: "",
 
 seguidores: { kick: 0, youtube: 0, tiktok: 11148, discord: 63 }, // discord: dato real del servidor (se actualiza solo)
 
-tiktokVideos: [
-
-// { id: "7301234567890123456", titulo: "Título", thumb: "img/portada1.jpg" },
-
+tiktokVideos: [ // reels a mano: se usan SOLO si la API de TikTok no trae nada
+{ id: "7710750350315097345", titulo: "no entiendo nada!!!... #directos #stream #backseatchampions", fecha: "2026-11-21T22:11:13Z" },
+{ id: "7710417426558586118", titulo: "nunca confias en el del clima! #backseatchampions #F1", fecha: "2026-11-21T00:37:27Z" },
+{ id: "7710411302316887348", titulo: "#backseatchampions #carreras #F1 #game", fecha: "2026-11-21T00:13:49Z" },
+{ id: "7709643648996019457", titulo: "estamos probando #backseatchampions en directo!!!", fecha: "2026-11-18T22:36:55Z" },
+{ id: "7709604276275875073", titulo: "UN JUEGO DE F1 DIFERENTE! #backseatchampions", fecha: "2026-11-18T20:03:54Z" },
+{ id: "7709603833768381717", titulo: "Carrera: nos sacan de pista y perdimos cuatro posiciones", fecha: "2026-11-18T20:00:11Z" },
+{ id: "7709596238836010292", titulo: "Pinchazo en plena carrera y llegamos sin parar en pits", fecha: "2026-11-18T19:30:59Z" },
+{ id: "7709544698951519494", titulo: "PONETE EN LOS ZAPATOS DE LOS INGENIEROS DE CARRERA!!", fecha: "2026-11-18T16:10:33Z" },
+{ id: "7706271311470824724", titulo: "tengo miedo jajaja #airsoft #cqb #ushuaia", fecha: "2026-11-09T20:28:38Z" },
+{ id: "7678547038287580433", titulo: "juguemos para divertirnos!!! #valorant #valorantlatam", fecha: "2026-08-27T03:24:13Z" },
+{ id: "7678542899981700368", titulo: "soy super realista. #valorant #valorantlatam", fecha: "2026-08-27T03:08:42Z" },
+{ id: "7678531745469304080", titulo: "nosotros gobernamos el juego #valorant #valorantlatam", fecha: "2026-08-27T02:25:12Z" },
 ],
 
 };
@@ -160,7 +169,7 @@ $("#tagline").textContent = CONFIG.tagline;
 
 $("#foot-name").textContent = `© ${new Date().getFullYear()} ${CONFIG.nombre}`;
 
-[["#link-kick", kickUrl], ["#link-kick2", kickUrl], ["#f-kick", kickUrl], ["#link-yt", CONFIG.youtubeCanal], ["#btn-yt", CONFIG.youtubeCanal], ["#btn-tt", ttUrl],
+[["#link-kick2", kickUrl], ["#f-kick", kickUrl], ["#link-yt", CONFIG.youtubeCanal], ["#btn-yt", CONFIG.youtubeCanal], ["#btn-tt", ttUrl],
 
 ["#f-yt", CONFIG.youtubeCanal], ["#link-tt", ttUrl], ["#f-tt", ttUrl]].forEach(([s, u]) => ($(s).href = u));
 
@@ -860,3 +869,88 @@ function abrirDiscord(e) {
 }
 document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   .forEach((a) => a.addEventListener("click", abrirDiscord));
+
+/* ---- Menú "Seguime en…": Kick, YouTube, TikTok y las redes de CONFIG.redes, cada una con su logo ---- */
+(() => {
+  const ICONOS = {"Kick": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#53fc18\"/><path d=\"M6.5 5.5h3.2v4.1l3.5-4.1h3.9l-4.1 4.8 4.4 6.7h-3.9l-2.7-4.3-1.1 1.2v3.1H6.5z\" fill=\"#0b0b0b\"/></svg>", "YouTube": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"1\" y=\"4.5\" width=\"22\" height=\"15\" rx=\"4.5\" fill=\"#ff0000\"/><path d=\"M10 8.8v6.4l5.6-3.2z\" fill=\"#fff\"/></svg>", "TikTok": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#0b0b0b\"/><path d=\"M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z\" fill=\"#25f4ee\" transform=\"translate(-.8 .6)\"/><path d=\"M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z\" fill=\"#fe2c55\" transform=\"translate(.8 -.5)\"/><path d=\"M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z\" fill=\"#fff\"/></svg>", "Instagram": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><defs><linearGradient id=\"ig\" x1=\"0\" y1=\"1\" x2=\"1\" y2=\"0\"><stop offset=\"0\" stop-color=\"#feda75\"/><stop offset=\".35\" stop-color=\"#fa7e1e\"/><stop offset=\".6\" stop-color=\"#d62976\"/><stop offset=\"1\" stop-color=\"#4f5bd5\"/></linearGradient></defs><rect width=\"24\" height=\"24\" rx=\"6.5\" fill=\"url(#ig)\"/><rect x=\"5.2\" y=\"5.2\" width=\"13.6\" height=\"13.6\" rx=\"4\" fill=\"none\" stroke=\"#fff\" stroke-width=\"1.7\"/><circle cx=\"12\" cy=\"12\" r=\"3.2\" fill=\"none\" stroke=\"#fff\" stroke-width=\"1.7\"/><circle cx=\"16.2\" cy=\"7.8\" r=\"1\" fill=\"#fff\"/></svg>", "Facebook": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#1877f2\"/><path d=\"M13.3 19.5v-6.2h2.1l.4-2.5h-2.5V9.3c0-.7.3-1.3 1.4-1.3h1.2V5.8c-.2 0-.9-.1-1.8-.1-2 0-3.2 1.2-3.2 3.3v1.8H8.8v2.5h2.1v6.2z\" fill=\"#fff\"/></svg>", "X": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#0b0b0b\" stroke=\"#444\" stroke-width=\".8\"/><path d=\"M6.2 6h3.2l8.4 12h-3.2z\" fill=\"#fff\"/><path d=\"M17.6 6 6.4 18\" stroke=\"#fff\" stroke-width=\"1.5\" stroke-linecap=\"round\" fill=\"none\"/></svg>", "Discord": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#5865f2\"/><path d=\"M7.6 7.4c1.3-.6 2.9-1 4.4-1s3.1.4 4.4 1c1 1.8 1.6 3.9 1.5 6.5-.9.7-2 1.2-3.2 1.5l-.7-1.1c-.5.1-1 .2-2 .2s-1.500-.1-2-.2l-.7 1.100c-1.200-.3-2.300-.8-3.200-1.500-.1-2.600.5-4.700 1.500-6.500z\" fill=\"#fff\"/><circle cx=\"9.600\" cy=\"12\" r=\"1.200\" fill=\"#5865f2\"/><circle cx=\"14.400\" cy=\"12\" r=\"1.200\" fill=\"#5865f2\"/></svg>", "WhatsApp": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"11\" fill=\"#25d366\"/><path d=\"M12 5.2a6.800 6.800 0 0 0-5.800 10.300L5.300 18.800l3.400-.9A6.800 6.800 0 1 0 12 5.200z\" fill=\"none\" stroke=\"#fff\" stroke-width=\"1.500\" stroke-linejoin=\"round\"/><path d=\"M9.600 8.900c.2-.4.6-.4.9-.3l.7 1.500-.5.7c.5 1 1.300 1.800 2.300 2.300l.7-.5 1.500.7c.1.3.1.7-.3.9-1 .6-2.300.3-3.400-.5S9 10.100 9.600 8.900z\" fill=\"#fff\"/></svg>", "Twitch": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect width=\"24\" height=\"24\" rx=\"6\" fill=\"#9146ff\"/><path d=\"M6 5.500h12.500v8.200l-3 3h-3l-2 2v-2H6z\" fill=\"#fff\"/><path d=\"M13.200 8.300v3.300M16 8.300v3.300\" stroke=\"#9146ff\" stroke-width=\"1.400\" stroke-linecap=\"round\"/></svg>"};
+  const btn = $("#seguime-btn"), menu = $("#seguime-menu"), cont = $("#seguime");
+  [{ nombre: "Kick", url: kickUrl }, { nombre: "YouTube", url: CONFIG.youtubeCanal }, { nombre: "TikTok", url: ttUrl }, ...CONFIG.redes].forEach((r) => {
+    const a = document.createElement(r.url ? "a" : "span");
+    a.className = "seguime-item" + (r.url ? "" : " off"); a.setAttribute("role", "menuitem");
+    if (r.url) { a.href = r.url; a.target = "_blank"; a.rel = "noopener"; } else a.title = "Próximamente";
+    a.innerHTML = (ICONOS[r.nombre] || "") + "<b></b>"; a.querySelector("b").textContent = r.nombre;
+    if (r.nombre === "Discord" && r.url) a.addEventListener("click", abrirDiscord); // Discord abre la app directo
+    menu.append(a);
+  });
+  const cerrar = () => { menu.hidden = true; btn.setAttribute("aria-expanded", "false"); };
+  btn.addEventListener("click", () => {
+    const abrir = menu.hidden; menu.hidden = !abrir; btn.setAttribute("aria-expanded", String(abrir));
+    if (abrir) { // si abajo no hay lugar, el menu se abre hacia arriba (nunca queda cortado)
+      menu.classList.remove("sube");
+      const r = menu.getBoundingClientRect();
+      if (r.bottom > innerHeight - 12 && btn.getBoundingClientRect().top > r.height + 80) menu.classList.add("sube");
+    }
+  });
+  menu.addEventListener("click", (e) => { if (e.target.closest("a")) cerrar(); });
+  document.addEventListener("click", (e) => { if (!cont.contains(e.target)) cerrar(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { cerrar(); btn.focus(); } });
+})();
+
+/* ---- Extras "wow": palabra que se escribe sola, brillo que sigue al mouse, barra de scroll, volver arriba y menú activo ---- */
+(() => {
+  const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // 1) "Acá jugamos ___" con efecto máquina de escribir (editá las palabras a gusto)
+  const PAL = ["Valorant", "F1", "Among Us", "con la comunidad"];
+  const p = document.createElement("p"); p.className = "rotador";
+  p.innerHTML = 'Acá jugamos <b></b><span class="cursor" aria-hidden="true"></span>';
+  $("#tagline").after(p);
+  const pal = p.querySelector("b");
+  if (quieto) pal.textContent = PAL.join(" · ");
+  else {
+    let i = 0, n = 0, borra = false;
+    const paso = () => {
+      const w = PAL[i]; n += borra ? -1 : 1; pal.textContent = w.slice(0, n);
+      let t = borra ? 45 : 90;
+      if (!borra && n === w.length) { borra = true; t = 1400; }
+      else if (borra && n === 0) { borra = false; i = (i + 1) % PAL.length; t = 350; }
+      setTimeout(paso, t);
+    };
+    paso();
+  }
+
+  // 2) brillo violeta que sigue al mouse dentro de las tarjetas
+  document.querySelectorAll(".cap, .seg, .info-card, .pcard").forEach((el) => {
+    el.classList.add("glow-host"); el.append(document.createElement("x-glow"));
+    el.addEventListener("pointermove", (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--mx", e.clientX - r.left + "px"); el.style.setProperty("--my", e.clientY - r.top + "px");
+    });
+  });
+
+  // 3) barra de progreso de scroll + botón "volver arriba"
+  const barra = document.createElement("div"); barra.id = "progreso"; document.body.append(barra);
+  const arriba = document.createElement("button");
+  arriba.id = "arriba"; arriba.type = "button"; arriba.textContent = "↑"; arriba.setAttribute("aria-label", "Volver arriba");
+  arriba.addEventListener("click", () => scrollTo({ top: 0, behavior: quieto ? "auto" : "smooth" }));
+  document.body.append(arriba);
+  let espera = false;
+  addEventListener("scroll", () => {
+    if (espera) return; espera = true;
+    requestAnimationFrame(() => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      barra.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+      arriba.classList.toggle("ver", scrollY > 700); espera = false;
+    });
+  }, { passive: true });
+
+  // 4) el menú de arriba marca en qué sección estás
+  const links = [...document.querySelectorAll(".top nav a")];
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver((en) => en.forEach((x) => {
+      if (x.isIntersecting) links.forEach((a) => a.classList.toggle("activo", a.getAttribute("href") === "#" + x.target.id));
+    }), { rootMargin: "-45% 0px -50% 0px" });
+    links.forEach((a) => { const sec = document.querySelector(a.getAttribute("href")); if (sec) io.observe(sec); });
+  }
+})();
+
