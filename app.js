@@ -22,7 +22,6 @@ redes: [ // los que tengan url se muestran
 
 { nombre: "Discord", url: "https://discord.gg/bghCDSQVdm" },
 
-{ nombre: "WhatsApp", url: "" },
 
 ],
 
