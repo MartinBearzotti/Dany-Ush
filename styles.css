@@ -373,3 +373,5 @@ section[id]{scroll-margin-top:88px}
 .sg-grid .seguime-item{padding:12px 14px 12px 12px;border-radius:18px;background:rgba(139,92,246,.1);border:1px solid var(--line)}
 @media (max-width:360px){.sg-grid{grid-template-columns:1fr}}
 section[id]{scroll-margin-top:100px}
+/* reels de TikTok sin miniatura: portada de respaldo con los colores de TikTok */
+.poster.sin-thumb{background-image:radial-gradient(circle at 12% 0%,rgba(37,244,238,.30),transparent 52%),radial-gradient(circle at 92% 100%,rgba(254,44,85,.34),transparent 55%),linear-gradient(160deg,#1c0c36,#0b0415)}
