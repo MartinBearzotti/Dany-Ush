@@ -3,6 +3,14 @@ const CONFIG = {
   nombre: "DANY-USH",
   logo: "img/logo.png",
   tagline: "Directos, videos y reels en un solo lugar.",
+  bio: "Streamer argentino. Directos en Kick, videos en YouTube y reels en TikTok.",
+  email: "",                          // mail para marcas y colaboraciones
+  redes: [                            // los que tengan url se muestran
+    { nombre: "Instagram", url: "" },
+    { nombre: "Discord", url: "" },
+    { nombre: "WhatsApp", url: "" },
+  ],
+  donar: { texto: "Invitame un cafecito", url: "" },   // Cafecito / MercadoPago
   kick: "danielquiroga64",            // kick.com/USUARIO
   youtubeCanal: "https://www.youtube.com/",   // link del canal
   tiktok: "danielquiroga64",
@@ -21,6 +29,8 @@ const CONFIG = {
 const $ = (s) => document.querySelector(s);
 const kickUrl = `https://kick.com/${CONFIG.kick}`, ttUrl = `https://www.tiktok.com/@${CONFIG.tiktok}`;
 let enVivo = false;
+const DATA = { kick: [], youtube: [], tiktok: [] };
+let filtro = "todo", visibles = 12, proxT = null;
 
 document.title = `${CONFIG.nombre} | Directos, videos y reels`;
 $("#nombre").textContent = CONFIG.nombre;
@@ -39,8 +49,9 @@ const EMBEDS = {
 };
 function abrir(tipo, id, titulo) {
   const [src, ratio] = EMBEDS[tipo](id);
-  marco.className = `marco ${ratio}`;
-  marco.innerHTML = `<iframe src="${src}" title="${titulo}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  const ifr = (s) => `<iframe src="${s}" title="${titulo}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  marco.className = tipo === "kick" ? "marco kickchat" : `marco ${ratio}`;
+  marco.innerHTML = ifr(src) + (tipo === "kick" ? `<iframe class="chat" src="https://kick.com/popout/${id}/chat" title="Chat de Kick"></iframe>` : "");
   $("#visor-titulo").textContent = titulo;
   visor.showModal();
 }
@@ -97,7 +108,8 @@ function pintarProximo() {
   const cuenta = m >= 1440 ? `en ${Math.floor(m / 1440)} d ${Math.floor((m % 1440) / 60)} h` : m >= 60 ? `en ${Math.floor(m / 60)} h ${m % 60} min` : `en ${m} min`;
   const dia = new Date(t - 3 * 3600e3).toLocaleDateString("es-AR", { weekday: "long", timeZone: "UTC" });
   const hora = new Date(t - 3 * 3600e3).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC" });
-  el.innerHTML = `Próximo directo: ${dia} ${hora} h<small>${cuenta} (hora Argentina)</small>`;
+  proxT = t;
+  el.innerHTML = `Próximo directo: ${dia} ${hora} h<small>${cuenta} (hora Argentina)</small><button class="mini" id="btn-cal" type="button">Agregar a mi calendario</button>`;
 }
 setInterval(pintarProximo, 30000);
 
@@ -113,17 +125,68 @@ async function cargarKick() {
     if (d.thumb) $("#poster-kick").style.backgroundImage = `url("${d.thumb}")`;
   } else { $("#poster-kick").classList.add("offline"); $("#titulo-kick").textContent = "Directo en Kick: ahora offline"; }
   pintarProximo();
-  fila($("#rail-kick"), (d.vods || []).map((v) => ({ ...v, tipo: "kickvod" })), "med", "Próximamente");
+  DATA.kick = (d.vods || []).map((v) => ({ ...v, tipo: "kickvod" }));
+  fila($("#rail-kick"), DATA.kick, "med", "Próximamente"); pintarUltimo();
 }
 async function cargarYouTube() {
   let d = { videos: [] };
   try { d = await (await fetch("/api/youtube")).json(); } catch (_) {}
-  fila($("#rail-yt"), (d.videos || []).map((v) => ({ ...v, tipo: "youtube" })), "med", "Próximamente");
+  DATA.youtube = (d.videos || []).map((v) => ({ ...v, tipo: "youtube" }));
+  fila($("#rail-yt"), DATA.youtube, "med", "Próximamente"); pintarUltimo();
 }
 function cargarTikTok() {
-  fila($("#rail-tt"), CONFIG.tiktokVideos.map((v) => ({ ...v, tipo: "tiktok" })), "tall", "Próximamente");
+  DATA.tiktok = CONFIG.tiktokVideos.map((v) => ({ ...v, tipo: "tiktok" }));
+  fila($("#rail-tt"), DATA.tiktok, "tall", "Próximamente"); pintarUltimo();
   if (!CONFIG.tiktokVideos.length) $("#rail-tt").hidden = true;
   $("#tt-embed").innerHTML = `<blockquote class="tiktok-embed" cite="${ttUrl}" data-unique-id="${CONFIG.tiktok}" data-embed-type="creator" style="max-width:780px;min-width:288px;"><section><a target="_blank" rel="noopener" href="${ttUrl}?refer=creator_embed">@${CONFIG.tiktok}</a></section></blockquote>`;
   const s = document.createElement("script"); s.async = true; s.src = "https://www.tiktok.com/embed.js"; document.body.append(s);
 }
 pintarProximo(); cargarKick(); cargarYouTube(); cargarTikTok();
+
+/* ---- calendario (.ics) ---- */
+$("#proximo").addEventListener("click", (e) => { if (e.target.id === "btn-cal" && proxT) descargarICS(proxT); });
+function descargarICS(t) {
+  const f = (ms) => new Date(ms).toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+  const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//DANY-USH//ES", "BEGIN:VEVENT", `UID:${t}@dany-ush`,
+    `DTSTAMP:${f(Date.now())}`, `DTSTART:${f(t)}`, `DTEND:${f(t + 2 * 3600e3)}`, `SUMMARY:Directo de ${CONFIG.nombre} en Kick`,
+    `URL:${kickUrl}`, "BEGIN:VALARM", "TRIGGER:-PT15M", "ACTION:DISPLAY", "DESCRIPTION:Arranca el directo", "END:VALARM",
+    "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); a.download = "directo.ics"; a.click();
+}
+
+/* ---- Lo último: todo mezclado con filtros ---- */
+const PLAT = { kick: "Kick", youtube: "YouTube", tiktok: "TikTok" };
+const chips = $("#chips");
+[["todo", "Todo"], ...Object.entries(PLAT)].forEach(([k, n]) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chip"; b.textContent = n; b.setAttribute("aria-pressed", k === "todo");
+  b.addEventListener("click", () => {
+    filtro = k; visibles = 12;
+    chips.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", c === b));
+    pintarUltimo();
+  });
+  chips.append(b);
+});
+$("#mas").addEventListener("click", () => { visibles += 12; pintarUltimo(); });
+function pintarUltimo() {
+  const todos = Object.entries(DATA).flatMap(([plat, arr]) => arr.map((v) => ({ ...v, plat })))
+    .filter((v) => filtro === "todo" || v.plat === filtro)
+    .sort((x, y) => new Date(y.fecha || 0) - new Date(x.fecha || 0));
+  const g = $("#grid"); g.innerHTML = "";
+  if (!todos.length) { g.innerHTML = '<p class="vacio">Todavía no hay contenido para mostrar.</p>'; $("#mas").hidden = true; return; }
+  todos.slice(0, visibles).forEach((v) => {
+    const p = poster(v, "med"), t = document.createElement("span");
+    t.className = `plat ${v.plat}`; t.textContent = PLAT[v.plat]; p.append(t); g.append(p);
+  });
+  $("#mas").hidden = todos.length <= visibles;
+}
+
+/* ---- Sobre mí, redes, donaciones, mail ---- */
+$("#bio").textContent = CONFIG.bio;
+CONFIG.redes.filter((r) => r.url).forEach((r) => {
+  const l = document.createElement("a"); l.href = r.url; l.target = "_blank"; l.rel = "noopener"; l.textContent = r.nombre; $("#redes").append(l);
+});
+if (CONFIG.email) { const m = $("#btn-mail"); m.href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; m.hidden = false; }
+if (CONFIG.donar.url) { const d = $("#btn-donar"); d.href = CONFIG.donar.url; d.textContent = CONFIG.donar.texto; d.hidden = false; }
+if (!CONFIG.email && !CONFIG.donar.url && !CONFIG.redes.some((r) => r.url)) $("#contacto").classList.add("sin-datos");

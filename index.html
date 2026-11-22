@@ -3,12 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="app.js" defer></script>
   <title>DANY-USH | Directos, videos y reels</title>
   <meta name="description" content="Página oficial de DANY-USH: directos de Kick, videos de YouTube y reels de TikTok en un solo lugar.">
   <meta name="theme-color" content="#0d0518">
   <link rel="icon" type="image/png" href="img/favicon.png">
-  <meta property="og:image" content="img/logo.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="DANY-USH | Directos, videos y reels">
+  <meta property="og:description" content="Directos de Kick, videos de YouTube y reels de TikTok en un solo lugar.">
+  <!-- Cambiá TU-DOMINIO por la URL final (ej: danyush.vercel.app) -->
+  <meta property="og:image" content="https://TU-DOMINIO/img/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)}</script>
+  <script defer src="/_vercel/insights/script.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@500;800&display=swap" rel="stylesheet">
@@ -17,7 +23,7 @@
 <body>
   <header class="top">
     <a class="logo" href="#"><img src="img/logo.png" alt=""><span>DANY-USH</span></a>
-    <nav><a href="#kick">Kick</a><a href="#youtube">YouTube</a><a href="#tiktok">TikTok</a></nav>
+    <nav><a href="#ultimo">Lo último</a><a href="#kick">Kick</a><a href="#youtube">YouTube</a><a href="#tiktok">TikTok</a><a href="#contacto">Contacto</a></nav>
   </header>
 
   <main>
@@ -39,6 +45,12 @@
       </button>
     </section>
 
+    <section class="row" id="ultimo">
+      <div class="row-head"><h2>Lo último</h2><div class="chips" id="chips"></div></div>
+      <div class="grid" id="grid"></div>
+      <div class="mas-wrap"><button class="btn" id="mas" type="button" hidden>Ver más</button></div>
+    </section>
+
     <section class="row" id="kick">
       <div class="row-head"><h2>Streams anteriores</h2><a id="link-kick2" target="_blank" rel="noopener">Ver canal</a></div>
       <div class="rail" id="rail-kick"></div>
@@ -53,6 +65,17 @@
       <div class="row-head"><h2>Reels de TikTok</h2><a id="link-tt" target="_blank" rel="noopener">Ver perfil</a></div>
       <div class="rail" id="rail-tt"></div>
       <div class="tt-embed" id="tt-embed"></div>
+    </section>
+    <section class="row about" id="contacto">
+      <div class="about-box">
+        <h2>Sobre DANY-USH</h2>
+        <p id="bio"></p>
+        <div class="redes" id="redes"></div>
+        <div class="about-actions">
+          <a class="btn primary" id="btn-mail" hidden>Marcas y colaboraciones</a>
+          <a class="btn" id="btn-donar" target="_blank" rel="noopener" hidden></a>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -71,5 +94,6 @@
     <div class="marco" id="marco"></div>
   </dialog>
 
+  <script src="app.js"></script>
 </body>
 </html>
