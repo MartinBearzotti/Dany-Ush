@@ -17,7 +17,18 @@ async function leerSeguidores(user) {
       headers: { "User-Agent": UA, "Accept-Language": "es-AR,es;q=0.9" },
     });
     if (!r.ok) return null;
-    const m = (await r.text()).match(/"followerCount":\s*(\d+)/);
+    const html = await r.text();
+    // 1) datos del perfil que TikTok embebe en la página (valor exacto, de ese usuario)
+    const j = html.match(/<script[^>]+id="__UNIVERSAL_DATA_FOR_HYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
+    if (j) {
+      try {
+        const ui = JSON.parse(j[1])?.__DEFAULT_SCOPE__?.["webapp.user-detail"]?.userInfo;
+        const n = Number(ui?.statsV2?.followerCount ?? ui?.stats?.followerCount);
+        if (n > 0) return n;
+      } catch (_) {}
+    }
+    // 2) plan B: primer followerCount que aparezca en la página
+    const m = html.match(/"followerCount":\s*"?(\d+)/);
     return m ? Number(m[1]) : null;
   } catch (_) { return null; }
 }
@@ -51,6 +62,6 @@ export default async function handler(req, res) {
   if (seg.status === "fulfilled" && seg.value) out.seguidores = seg.value;
   if (!out.videos.length) out.aviso = "No se pudieron leer los videos del feed RSS de TikTok";
   // si salió vacío NO se guarda en caché, así se recupera solo en el próximo intento
-  res.setHeader("Cache-Control", out.videos.length ? "s-maxage=300, stale-while-revalidate=600" : "no-store");
+  res.setHeader("Cache-Control", out.videos.length ? "s-maxage=60, stale-while-revalidate=120" : "no-store");
   res.status(200).json(out);
 }
