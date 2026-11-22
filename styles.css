@@ -317,3 +317,6 @@ body.live .row{scroll-margin-top:124px}
 .seg-panel .row-head h2{font-size:clamp(1.3rem,3vw,1.9rem)}
 .seg-panel .seg-total{background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(135deg,var(--violet),var(--magenta),var(--cyan)) border-box;box-shadow:0 0 70px -24px var(--magenta)}
 .seg-panel .seg .n{font-size:clamp(1.8rem,3.4vw,2.4rem)}
+.donar-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.donar-alias{margin-top:10px;color:var(--text)!important}
+.donar-alias b{color:var(--violet-soft);user-select:all}

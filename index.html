@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta name="color-scheme" content="light only">
-  <meta name="darkreader-lock">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>DANY-USH | Directos, videos y reels</title>
   <meta name="description" content="Página oficial de DANY-USH: directos de Kick, videos de YouTube y reels de TikTok en un solo lugar.">
   <meta name="theme-color" content="#0d0518">
-  <link rel="icon" type="image/png" href="/favicon-v2.png">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dany-ush.vercel.app/">
   <link rel="canonical" href="https://dany-ush.vercel.app/">
@@ -155,7 +152,7 @@
         </div>
       </div>
     </section>
-    
+
     <section class="row" id="chat">
       <div class="row-head"><h2>Comandos y reglas del chat</h2></div>
       <div class="info-grid">
@@ -179,7 +176,16 @@
         </a>
         <article class="cap cap-redes"><h3>Seguime</h3><div class="redes" id="redes"></div></article>
         <div class="duo">
-          <article class="cap" id="cap-donar" hidden><h3>Apoyá el canal</h3><p>Tu aporte ayuda a seguir haciendo más contenido.</p><a class="btn primary" id="btn-donar" target="_blank" rel="noopener"></a></article>
+          <article class="cap" id="cap-donar" hidden>
+            <h3>Apoyá el canal</h3>
+            <p>Tu aporte ayuda a seguir haciendo más contenido.</p>
+            <div class="donar-btns">
+              <button class="btn primary" id="btn-mp" type="button" hidden>Mercado Pago</button>
+              <a class="btn primary" id="btn-cafecito" target="_blank" rel="noopener" hidden>Cafecito</a>
+              <a class="btn primary" id="btn-paypal" target="_blank" rel="noopener" hidden>PayPal</a>
+            </div>
+            <p class="donar-alias" id="donar-alias" hidden></p>
+          </article>
           <article class="cap" id="cap-avisos" hidden>
             <h3>Enterate de los directos</h3>
             <p id="avisos-txt">Dejá tu mail y te avisamos cuando arranque el próximo directo.</p>

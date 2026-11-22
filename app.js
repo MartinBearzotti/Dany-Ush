@@ -8,7 +8,7 @@ logo: "/logo-v2.png",
 
 tagline: "Directos, videos y reels en un solo lugar.",
 
-bio: "Gaming divertido y aventuras en la Tierra Media. El fin es divertirse y pasar un buen rato.",
+bio: "Gaming divertido: Valorant, F1, Among Us y mucho más. El fin es divertirse y pasar un buen rato.",
 
 email: "", // mail para marcas y colaboraciones
 
@@ -26,7 +26,7 @@ redes: [ // los que tengan url se muestran
 
 ],
 
-donar: { texto: "Invitame un cafecito", url: "" }, // Cafecito / MercadoPago
+donar: { alias: "", cafecito: "", paypal: "" }, // alias de Mercado Pago, link de Cafecito, link de PayPal
 
 kick: "danyush", // kick.com/USUARIO
 
@@ -52,7 +52,7 @@ horario: [
 
 bannerOffline: "/og-v2.png", // imagen fija cuando Kick está offline
 
-jugando: "El Señor de los Anillos: La Batalla por la Tierra Media",
+jugando: "Backseat Champions",
 
 setup: [
 
@@ -78,9 +78,9 @@ clips: [
 
 contenido: [
 
-{titulo: "Valorant", texto: "Partidas, clutches y mucho humor. Entrá al directo y jugá con la comunidad." },
+{ titulo: "Valorant", texto: "Partidas, clutches y mucho humor. Entrá al directo y jugá con la comunidad." },
 
-{ titulo: "Gaming y aventuras", texto: "Juegos variados, desafíos y todo lo que se me cruce." },
+{ titulo: "F1, Among Us y más", texto: "Carreras, juegos de deducción y de todo un poco." },
 
 { titulo: "Directos con la comunidad", texto: "Charla, risas y jugar juntos. Pasá y quedate un rato." },
 
@@ -124,7 +124,7 @@ discordNombre: "",
 
 // Números a mano por si alguna plataforma no entrega el dato sola (0 = no mostrar). Los automáticos tienen prioridad.
 
-seguidores: { kick: 0, youtube: 0, tiktok:11148 , discord: 63 }, // discord: dato real del servidor (se actualiza solo)
+seguidores: { kick: 0, youtube: 0, tiktok: 11148, discord: 63 }, // discord: dato real del servidor (se actualiza solo)
 
 tiktokVideos: [
 
@@ -582,7 +582,19 @@ if (d.approximate_member_count) c.querySelector("span").textContent = `${d.appro
 
 if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; $("#cap-mail").hidden = false; }
 
-{ const d = $("#btn-donar"); $("#cap-donar").hidden = false; if (CONFIG.donar.url) { d.href = CONFIG.donar.url; d.textContent = CONFIG.donar.texto; } else { d.textContent = "Próximamente"; d.classList.add("off"); } }
+(() => {
+  const D = CONFIG.donar, mp = $("#btn-mp"), ca = $("#btn-cafecito"), pp = $("#btn-paypal"), al = $("#donar-alias");
+  if (D.cafecito) { ca.href = D.cafecito; ca.hidden = false; }
+  if (D.paypal) { pp.href = D.paypal; pp.hidden = false; }
+  if (D.alias) {
+    mp.hidden = false;
+    mp.addEventListener("click", async () => {
+      al.hidden = false; al.innerHTML = "Alias: <b></b>"; al.querySelector("b").textContent = D.alias;
+      try { await navigator.clipboard.writeText(D.alias); mp.textContent = "¡Alias copiado!"; setTimeout(() => (mp.textContent = "Mercado Pago"), 2000); } catch (_) {}
+    });
+  }
+  $("#cap-donar").hidden = !(D.alias || D.cafecito || D.paypal);
+})();
 
 
 
@@ -827,6 +839,8 @@ $("#seg-nota").textContent = visibles.some((k) => !SEG[k]) ? "Suma de las plataf
 
 }
 
+Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, n));
+
 /* ---- Discord: abre la app directo; si no la tiene, abre la web ---- */
 function abrirDiscord(e) {
   if (!dc) return;
@@ -847,5 +861,3 @@ function abrirDiscord(e) {
 }
 document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   .forEach((a) => a.addEventListener("click", abrirDiscord));
-
-Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, n));
