@@ -488,7 +488,25 @@ l.innerHTML = "<i></i>"; l.append(r.nombre); $("#redes").append(l);
 
 const dc = CONFIG.redes.find((r) => r.nombre === "Discord" && r.url);
 
-if (dc) { const c = $("#cap-discord"); c.href = dc.url; c.hidden = false; } else $("#bento").classList.add("sin-discord");
+if (dc) {
+
+const c = $("#cap-discord"); c.href = dc.url; c.hidden = false;
+
+// nombre, imagen y miembros del servidor (desde el invite; si falla, queda el texto por defecto)
+
+fetch(`https://discord.com/api/v10/invites/${dc.url.split("/").pop()}?with_counts=true`).then((r) => r.json()).then((d) => {
+
+const g = d.guild; if (!g) return;
+
+if (g.icon) { const i = new Image(); i.className = "dc-icon"; i.alt = ""; i.src = `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png?size=128`; c.prepend(i); }
+
+c.querySelector("b").textContent = `Sumate a ${g.name}`;
+
+if (d.approximate_member_count) c.querySelector("span").textContent = `${d.approximate_member_count.toLocaleString("es-AR")} miembros · ${(d.approximate_presence_count || 0).toLocaleString("es-AR")} en línea`;
+
+}).catch(() => {});
+
+} else $("#bento").classList.add("sin-discord");
 
 if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; $("#cap-mail").hidden = false; }
 

@@ -258,3 +258,6 @@ dialog[open]{animation:abrir .3s cubic-bezier(.2,.8,.2,1)}
 
 /* redes / donar sin link todavía */
 .social.off,.btn.off{opacity:.45;cursor:default;pointer-events:none}
+
+/* discord: icono del servidor */
+.dc-icon{width:64px;height:64px;border-radius:18px;object-fit:cover;box-shadow:0 8px 24px -8px rgba(0,0,0,.6)}
