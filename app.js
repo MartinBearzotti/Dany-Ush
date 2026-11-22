@@ -123,7 +123,7 @@ discordNombre: "",
 
 // Números a mano por si alguna plataforma no entrega el dato sola (0 = no mostrar). Los automáticos tienen prioridad.
 
-seguidores: { kick: 134, youtube: 291, tiktok: 0, discord: 63 }, // solo se usan hasta que cada plataforma entregue el dato real; después se reemplazan solos
+seguidores: { kick: 134, youtube: 291, tiktok: 11100, discord: 63 }, // solo se usan hasta que cada plataforma entregue el dato real; después se reemplazan solos
 
 tiktokVideos: [ // reels a mano: se usan SOLO si la API de TikTok no trae nada
 { id: "7710750350315097345", titulo: "no entiendo nada!!!... #directos #stream #backseatchampions", fecha: "2026-11-21T22:11:13Z" },
@@ -810,9 +810,9 @@ document.querySelectorAll(".seg").forEach((e) => { const u = SEGLINK[e.dataset.p
 
 function contar(el, desde, hasta) { // anima el número
 
-if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = hasta.toLocaleString("es-AR"); return; }
+if (!desde || matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = hasta.toLocaleString("es-AR"); return; } // el primer número aparece al instante
 
-const t0 = performance.now(), dur = 1000;
+const t0 = performance.now(), dur = 450;
 
 const paso = (t) => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(desde + (hasta - desde) * e).toLocaleString("es-AR"); if (p < 1) requestAnimationFrame(paso); };
 
@@ -820,13 +820,17 @@ requestAnimationFrame(paso);
 
 }
 
-function setSeg(p, n, sub) {
+function guardarSeg(p, n) { // recuerda el último número real para mostrarlo al instante la próxima vez
+try { const c = JSON.parse(localStorage.getItem("dany_seg") || "{}"); c[p] = n; localStorage.setItem("dany_seg", JSON.stringify(c)); } catch (_) {}
+}
+
+function setSeg(p, n, sub, manual) {
 
 n = Number(n); if (!n) return;
 
 const el = document.querySelector(`.seg[data-p="${p}"]`); if (!el) return;
 
-contar(el.querySelector(".n"), SEG[p], n); SEG[p] = n;
+contar(el.querySelector(".n"), SEG[p], n); SEG[p] = n; if (!manual) guardarSeg(p, n);
 
 if (sub) { const s = el.querySelector(".seg-sub"); s.textContent = sub; s.hidden = false; }
 
@@ -848,7 +852,9 @@ $("#seg-nota").textContent = visibles.some((k) => !SEG[k]) ? "Suma de las plataf
 
 }
 
-Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, n));
+// al abrir la página: último número real guardado en este navegador (o el de CONFIG si es la primera vez), sin esperar nada
+let cacheSeg = {}; try { cacheSeg = JSON.parse(localStorage.getItem("dany_seg") || "{}"); } catch (_) {}
+Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, cacheSeg[p] || n, "", !cacheSeg[p]));
 
 /* ---- Discord: abre la app directo; si no la tiene, abre la web ---- */
 function abrirDiscord(e) {
@@ -890,19 +896,22 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") { cerrar(); btn.focus(); } });
 })();
 
-/* ---- Seguidores: se vuelven a leer cada 5 minutos (YouTube, TikTok y Discord) para no quedar desactualizados ---- */
-setInterval(async () => {
-  try { const y = await (await fetch("/api/youtube")).json(); if (y.subs) { setStat("#st-yt", y.subs, "suscriptores"); setSeg("youtube", y.subs); } } catch (_) {}
-  try { const t = await (await fetch("/api/tiktok")).json(); if (t.seguidores) setSeg("tiktok", t.seguidores); } catch (_) {}
-  if (dc) {
+/* ---- Seguidores en vivo: un pedido liviano por plataforma, todos a la vez, y se repite cada minuto ---- */
+function leerSeguidores() {
+  ["kick", "youtube", "tiktok"].forEach(async (p) => {
     try {
-      const d = await (await fetch(`https://discord.com/api/v10/invites/${dc.url.split("/").pop()}?with_counts=true`)).json();
-      if (d.approximate_member_count) setSeg("discord", d.approximate_member_count, d.approximate_presence_count ? `${d.approximate_presence_count.toLocaleString("es-AR")} en línea ahora` : "");
+      const d = await (await fetch(`/api/seguidores?p=${p}`)).json();
+      if (!d[p]) return;
+      if (p === "kick") setStat("#st-kick", d[p], "seguidores");
+      if (p === "youtube") setStat("#st-yt", d[p], "suscriptores");
+      setSeg(p, d[p]);
     } catch (_) {}
+  });
+  if (dc) {
+    fetch(`https://discord.com/api/v10/invites/${dc.url.split("/").pop()}?with_counts=true`).then((r) => r.json()).then((d) => {
+      if (d.approximate_member_count) setSeg("discord", d.approximate_member_count, d.approximate_presence_count ? `${d.approximate_presence_count.toLocaleString("es-AR")} en línea ahora` : "");
+    }).catch(() => {});
   }
-}, 300000);
-
-/* ---- TikTok: el número de seguidores se vuelve a pedir cada minuto ---- */
-setInterval(async () => {
-  try { const t = await (await fetch("/api/tiktok")).json(); if (t.seguidores) setSeg("tiktok", t.seguidores); } catch (_) {}
-}, 60000);
+}
+leerSeguidores();
+setInterval(leerSeguidores, 60000);
