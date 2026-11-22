@@ -326,3 +326,14 @@ body.live .row{scroll-margin-top:124px}
 .donar-b.cafe{background:linear-gradient(135deg,#ff9f43,#e8590c);box-shadow:0 10px 30px -12px #ff9f43}
 .donar-b.pp{background:linear-gradient(135deg,#0070ba,#003087);box-shadow:0 10px 30px -12px #0070ba}
 .donar-b:hover{transform:translateY(-3px)}
+.hero-actions{position:relative;z-index:20}
+.seguime{position:relative;display:inline-block}
+.seguime .caret{display:inline-block;margin-left:4px;transition:transform .2s}
+.seguime #seguime-btn[aria-expanded="true"] .caret{transform:rotate(180deg)}
+.seguime #seguime-btn[aria-expanded="true"]{border-color:var(--violet);box-shadow:0 0 0 3px rgba(139,92,246,.25)}
+.seguime-menu{position:absolute;left:0;top:calc(100% + 10px);z-index:40;width:max-content;min-width:230px;max-width:calc(100vw - 40px);display:flex;flex-direction:column;gap:2px;padding:8px;border-radius:22px;border:1px solid var(--line);background:var(--surface2);box-shadow:0 26px 60px -18px #000,0 0 44px -20px var(--violet);animation:menuIn .18s ease-out}
+@keyframes menuIn{from{opacity:0;transform:translateY(-6px) scale(.98)}}
+.seguime-item{display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border-radius:16px;color:var(--text);text-decoration:none;font-weight:700;transition:background .15s,transform .15s}
+.seguime-item svg{width:28px;height:28px;flex:none}
+a.seguime-item:hover,a.seguime-item:focus-visible{background:rgba(139,92,246,.2);transform:translateX(3px);outline:0}
+.seguime-item.off{opacity:.45;cursor:default}
