@@ -214,7 +214,7 @@ function armarSlides() {
   slides = [];
   for (let i = 0; i < 3; i++) listas.forEach((l) => l[i] && slides.push(l[i]));
   if (idx >= slides.length) idx = 0;
-  const dots = $("#dots");
+  const dots = $("#dots") || document.createElement("div");
   dots.innerHTML = "";
   slides.forEach((s, i) => {
     const b = document.createElement("button");
@@ -234,7 +234,7 @@ function mostrar(i, anim) {
   b.className = "badge " + (s.vivo ? "live" : s.plat);
   b.textContent = s.vivo ? `EN VIVO${KICK.viewers ? " · " + KICK.viewers : ""}` : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : "");
   $("#titulo-kick").textContent = s.titulo || "";
-  $("#dots").querySelectorAll("button").forEach((d, n) => d.setAttribute("aria-current", n === i));
+  document.querySelectorAll("#dots button").forEach((d, n) => d.setAttribute("aria-current", n === i));
   if (anim) { p.classList.remove("entra"); void p.offsetWidth; p.classList.add("entra"); }
 }
 function iniciarRotacion() {
@@ -242,7 +242,7 @@ function iniciarRotacion() {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   timer = setInterval(() => { if (slides.length > 1 && !pausa && !visor.open) mostrar((idx + 1) % slides.length, true); }, 5500);
 }
-const stage = $("#stage");
+const stage = $("#stage") || document.body;
 ["mouseenter", "focusin"].forEach((e) => stage.addEventListener(e, () => (pausa = true)));
 ["mouseleave", "focusout"].forEach((e) => stage.addEventListener(e, () => (pausa = false)));
 iniciarRotacion();
