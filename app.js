@@ -124,7 +124,7 @@ discordNombre: "",
 
 // Números a mano por si alguna plataforma no entrega el dato sola (0 = no mostrar). Los automáticos tienen prioridad.
 
-seguidores: { kick: 0, youtube: 0, tiktok: 0, discord: 63 }, // discord: dato real del servidor (se actualiza solo)
+seguidores: { kick: 0, youtube: 0, tiktok:11148 , discord: 63 }, // discord: dato real del servidor (se actualiza solo)
 
 tiktokVideos: [
 
