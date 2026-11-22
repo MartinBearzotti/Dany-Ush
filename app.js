@@ -584,16 +584,16 @@ if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colabo
 
 (() => {
   const D = CONFIG.donar, mp = $("#btn-mp"), ca = $("#btn-cafecito"), pp = $("#btn-paypal"), al = $("#donar-alias");
-  if (D.cafecito) { ca.href = D.cafecito; ca.hidden = false; }
-  if (D.paypal) { pp.href = D.paypal; pp.hidden = false; }
+  $("#cap-donar").hidden = false; // siempre visible; los botones sin dato quedan apagados ("Próximamente")
+  const apagar = (b) => { b.classList.add("off"); b.title = "Próximamente"; };
+  if (D.cafecito) ca.href = D.cafecito; else apagar(ca);
+  if (D.paypal) pp.href = D.paypal; else apagar(pp);
   if (D.alias) {
-    mp.hidden = false;
     mp.addEventListener("click", async () => {
       al.hidden = false; al.innerHTML = "Alias: <b></b>"; al.querySelector("b").textContent = D.alias;
       try { await navigator.clipboard.writeText(D.alias); mp.textContent = "¡Alias copiado!"; setTimeout(() => (mp.textContent = "Mercado Pago"), 2000); } catch (_) {}
     });
-  }
-  $("#cap-donar").hidden = !(D.alias || D.cafecito || D.paypal);
+  } else apagar(mp);
 })();
 
 
