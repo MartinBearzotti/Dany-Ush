@@ -198,6 +198,7 @@ const LINKS = {
 kick: (id) => `https://kick.com/${id}`,
 
 kickvod: (id) => `https://kick.com/${CONFIG.kick}/videos/${id}`,
+kickclip: (id) => `https://kick.com/${CONFIG.kick}/clips/${id}`,
 
 youtube: (id) => `https://youtu.be/${id}`,
 
@@ -223,6 +224,7 @@ function abrir(tipo, id, titulo) {
 
 linkActual = LINKS[tipo] ? LINKS[tipo](id) : kickUrl;
 
+if (tipo === "kickclip") { window.open(linkActual, "_blank", "noopener"); return; } // los clips de Kick se ven en Kick
 const [src, ratio] = EMBEDS[tipo](id);
 
 const ifr = (s) => `<iframe src="${s}" title="${titulo}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
@@ -263,7 +265,12 @@ abrir(s.tipo, s.id, s.titulo);
 
 const fmt = (f) => (f ? new Date(f).toLocaleDateString("es-AR", { day: "numeric", month: "short", year: "numeric" }) : "");
 
-function poster({ tipo, id, titulo, thumb, fecha }, clase) {
+function chipTxt(fecha, vistas) { // "18 nov · 3,4 mil vistas" (o solo la fecha / solo las vistas)
+  const nv = vistas != null ? new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(vistas) + " vistas" : "";
+  const t = nv && fecha ? `${new Date(fecha).toLocaleDateString("es-AR", { day: "numeric", month: "short" })} · ${nv}` : nv || (fecha ? fmt(fecha) : "");
+  return t ? `<span class="fecha">${t}</span>` : "";
+}
+function poster({ tipo, id, titulo, thumb, fecha, vistas }, clase) {
 
 const b = document.createElement("button");
 
@@ -276,7 +283,7 @@ b.style.backgroundImage = `url("${thumb}")`;
 if (tipo === "tiktok") { const im = new Image(); im.onerror = () => { b.style.backgroundImage = ""; b.classList.add("sin-thumb"); }; im.src = thumb; } // miniatura vencida o bloqueada: portada de respaldo
 } else if (tipo === "tiktok") b.classList.add("sin-thumb");
 
-b.innerHTML = `<span class="play"></span><span class="poster-title"></span>${fecha ? `<span class="fecha">${fmt(fecha)}</span>` : ""}`;
+b.innerHTML = `<span class="play"></span><span class="poster-title"></span>${chipTxt(fecha, vistas)}`;
 
 b.querySelector(".poster-title").textContent = titulo;
 
@@ -941,3 +948,15 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
     links.forEach((a) => { const sec = document.querySelector(a.getAttribute("href")); if (sec) io.observe(sec); });
   }
 })();
+
+/* ---- Clips populares de Kick (automatico, se suman a los de CONFIG.clips) ---- */
+(async () => {
+  let d = { clips: [] };
+  try { d = await (await fetch("/api/kick-clips")).json(); } catch (_) {}
+  const auto = (d.clips || []).map((c) => ({ ...c, tipo: "kickclip" }));
+  if (!auto.length) return;
+  $("#link-clips").href = `https://kick.com/${CONFIG.kick}/clips`;
+  $("#clips").hidden = false;
+  fila($("#rail-clips"), [...CLIPS, ...auto], "med", "");
+})();
+
