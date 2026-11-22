@@ -485,3 +485,12 @@ section[id]{scroll-margin-top:100px}
   .grid-3x2{--cols:1;--rows:2.4}
   .grid-3x2.tt-grid{--cols:2;--rows:1.5}
 }
+
+/* cápsula "EN VIVO" en la barra de arriba (aparece sola cuando hay directo) */
+.top .logo{flex:none}
+.live-pill{display:inline-flex;align-items:center;gap:8px;margin-right:auto;padding:7px 14px;border-radius:999px;border:0;cursor:pointer;
+  background:linear-gradient(135deg,var(--live),var(--magenta));color:#fff;font:800 .78rem var(--body);letter-spacing:.06em;
+  box-shadow:0 0 0 0 rgba(255,59,107,.55),0 8px 24px -10px var(--live);animation:latido 2s infinite;transition:transform .2s}
+.live-pill:hover{transform:scale(1.06)}
+@keyframes latido{70%{box-shadow:0 0 0 10px rgba(255,59,107,0),0 8px 24px -10px var(--live)}100%{box-shadow:0 0 0 0 rgba(255,59,107,0),0 8px 24px -10px var(--live)}}
+@media (max-width:520px){.live-pill{padding:6px 10px;font-size:.7rem}}
