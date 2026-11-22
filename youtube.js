@@ -1,9 +1,20 @@
 // Vercel serverless: lista TODOS los videos del canal + detecta si está en vivo.
 // Env: YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID (empieza con UC...)
 export default async function handler(req, res) {
-  const key = process.env.YOUTUBE_API_KEY, ch = process.env.YOUTUBE_CHANNEL_ID;
+  const key = process.env.YOUTUBE_API_KEY, ch = process.env.YOUTUBE_CHANNEL_ID || "UCG7poDcbGtKNc4hAQWBvqpA";
   res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
-  if (!key || !ch) return res.status(200).json({ videos: [], live: null, aviso: "Faltan variables de entorno" });
+  if (!key) { // sin clave: feed RSS público (últimos ~15 videos)
+    try {
+      const xml = await (await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${ch}`)).text();
+      const dec = (s) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+      const videos = [...xml.matchAll(/<entry>[\s\S]*?<\/entry>/g)].map(([e]) => {
+        const g = (t) => (e.match(new RegExp(`<${t}>([^<]*)</${t}>`)) || [])[1] || "";
+        const id = g("yt:videoId");
+        return { id, titulo: dec(g("title")), fecha: g("published"), thumb: `https://i.ytimg.com/vi/${id}/hqdefault.jpg` };
+      }).filter((v) => v.id);
+      return res.status(200).json({ videos, live: null });
+    } catch (_) { return res.status(200).json({ videos: [], live: null }); }
+  }
   try {
     const uploads = "UU" + ch.slice(2);
     let videos = [], token = "";

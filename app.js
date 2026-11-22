@@ -12,7 +12,8 @@ const CONFIG = {
   ],
   donar: { texto: "Invitame un cafecito", url: "" },   // Cafecito / MercadoPago
   kick: "CAMBIAR-USUARIO-KICK",       // kick.com/USUARIO (el del canal, no el de settings)
-  youtubeCanal: "https://www.youtube.com/@dany-ush6495",   // link del canal
+  youtubeCanal: "https://www.youtube.com/@dany-ush6495",
+  youtubeId: "UCG7poDcbGtKNc4hAQWBvqpA",   // link del canal
   tiktok: "dany_ushh",
   // Horario fijo de directos (hora Argentina). dia: 0=domingo ... 6=sábado
   horario: [
@@ -132,6 +133,10 @@ async function cargarYouTube() {
   let d = { videos: [] };
   try { d = await (await fetch("/api/youtube")).json(); } catch (_) {}
   DATA.youtube = (d.videos || []).map((v) => ({ ...v, tipo: "youtube" }));
+  if (!DATA.youtube.length) { // sin API: lista oficial de reproducción con todos los videos del canal
+    $("#rail-yt").innerHTML = `<iframe class="lista" src="https://www.youtube.com/embed/videoseries?list=UU${CONFIG.youtubeId.slice(2)}" title="Videos de ${CONFIG.nombre}" loading="lazy" allowfullscreen></iframe>`;
+    pintarUltimo(); return;
+  }
   fila($("#rail-yt"), DATA.youtube, "med", "Próximamente"); pintarUltimo();
 }
 function cargarTikTok() {

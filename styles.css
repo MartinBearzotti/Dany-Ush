@@ -36,7 +36,7 @@ main{padding:0 var(--pad) 70px}
 .hero-logo{display:block;width:clamp(96px,11vw,140px);height:auto;margin:0 0 16px -6px;filter:drop-shadow(0 14px 34px rgba(139,92,246,.75));animation:subir .8s both,flota 6s ease-in-out 1s infinite}
 @keyframes flota{50%{transform:translateY(-8px) rotate(-2deg)}}
 @keyframes subir{from{opacity:0;transform:translateY(26px)}}
-h1{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,7vw,5.6rem);line-height:1;letter-spacing:-.03em;
+h1{white-space:nowrap;font-family:var(--display);font-weight:800;font-size:clamp(2rem,5.2vw,4.4rem);line-height:1;letter-spacing:-.03em;
   background:linear-gradient(180deg,#fff 30%,var(--violet-soft));-webkit-background-clip:text;background-clip:text;color:transparent;animation:subir .8s .1s both}
 #tagline{color:var(--muted);font-size:1.2rem;margin:18px 0 26px;max-width:30ch;animation:subir .8s .2s both}
 .proximo{margin:0 0 24px;padding:16px 20px;border-radius:16px;max-width:36ch;font-weight:700;
@@ -159,3 +159,6 @@ dialog[open]{animation:abrir .3s cubic-bezier(.2,.8,.2,1)}
   *,*::before,*::after{animation:none!important;transition:none!important}
   html{scroll-behavior:auto}
 }
+
+.rail iframe.lista{flex:none;width:min(960px,100%);aspect-ratio:16/9;border:0;border-radius:18px;box-shadow:0 0 0 1px var(--violet),0 24px 60px -24px var(--violet);background:#000}
+.rail:has(iframe.lista){-webkit-mask:none;mask:none}
