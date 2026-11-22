@@ -261,3 +261,31 @@ dialog[open]{animation:abrir .3s cubic-bezier(.2,.8,.2,1)}
 
 /* discord: icono del servidor */
 .dc-icon{width:64px;height:64px;border-radius:18px;object-fit:cover;box-shadow:0 8px 24px -8px rgba(0,0,0,.6)}
+
+/* barra de directo en vivo */
+.livebar{position:sticky;top:0;z-index:40;height:40px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 var(--pad);
+  background:linear-gradient(90deg,var(--live),var(--magenta));color:#fff;font-weight:800;font-size:.9rem;white-space:nowrap;overflow:hidden}
+.livebar #livebar-t{min-width:0;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.live-dot{flex:none;width:9px;height:9px;border-radius:50%;background:#fff;animation:pulso 1.4s infinite}
+.livebtn{flex:none;padding:5px 14px;border-radius:999px;border:0;background:#fff;color:#b0124a;font:800 .82rem var(--body);cursor:pointer;transition:transform .2s}
+.livebtn:hover{transform:scale(1.06)}
+body.live .top{top:40px}
+body.live .row{scroll-margin-top:124px}
+
+/* seguidores en tarjetas de plataforma */
+.pcard em.stat{font-style:normal;font-weight:800;font-size:.85rem;color:var(--c);margin-top:4px}
+
+/* qué hago en el canal */
+.canal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.canal-grid .cap{padding:22px}
+
+/* reglas del chat */
+.reglas{padding-left:22px;display:flex;flex-direction:column;gap:8px;color:var(--muted);font-size:.95rem}
+.reglas li{padding-left:4px}
+
+/* avisos por mail */
+.avisos-form{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;width:100%}
+.avisos-form input{flex:1;min-width:180px;padding:12px 16px;border-radius:999px;border:1px solid var(--line);background:var(--surface2);color:var(--text);font:600 .95rem var(--body);outline:none}
+.avisos-form input:focus{border-color:var(--violet)}
+.avisos-msg{color:var(--violet-soft)!important;font-weight:700}
+@media (max-width:600px){.livebar #livebar-t{display:none}}

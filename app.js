@@ -66,6 +66,62 @@ setup: [
 
 ],
 
+// Clips destacados a mano. tipo: "youtube" | "kickvod" | "tiktok". thumb es opcional (en YouTube se arma sola)
+
+clips: [
+
+// { tipo: "youtube", id: "ID_DEL_VIDEO", titulo: "Mi mejor momento" },
+
+],
+
+// "Qué hago en el canal" (editá los textos)
+
+contenido: [
+
+{ titulo: "Batalla por la Tierra Media", texto: "Partidas, estrategia y mucho caos en la Tierra Media." },
+
+{ titulo: "Gaming y aventuras", texto: "Juegos variados, desafíos y todo lo que se me cruce." },
+
+{ titulo: "Directos con la comunidad", texto: "Charla, risas y jugar juntos. Pasá y quedate un rato." },
+
+{ titulo: "Clips y reels", texto: "Los mejores momentos, cortitos, en YouTube y TikTok." },
+
+],
+
+// Comandos del chat (EJEMPLOS: cambialos por los tuyos)
+
+comandos: [
+
+{ cmd: "!discord", desc: "Link al servidor de Discord" },
+
+{ cmd: "!horario", desc: "Días y horas de directo" },
+
+{ cmd: "!setup", desc: "Mi PC y mi equipo" },
+
+],
+
+// Reglas del chat (EJEMPLOS: cambialas por las tuyas)
+
+reglas: [
+
+"Respeto para todos: nada de insultos ni discriminación.",
+
+"No spamear ni mandar links sin permiso.",
+
+"Sin spoilers del juego.",
+
+"Pasarla bien: el fin es divertirse.",
+
+],
+
+// Para avisos por mail: URL de un formulario (Formspree, Getform, etc.). Vacío = se ofrece Discord
+
+avisosUrl: "",
+
+// Si el nombre del Discord se ve raro, escribí acá el que quieras mostrar
+
+discordNombre: "",
+
 tiktokVideos: [
 
 // { id: "7301234567890123456", titulo: "Título", thumb: "img/portada1.jpg" },
@@ -302,7 +358,7 @@ try { d = await (await fetch("/api/kick")).json(); } catch (_) {}
 
 enVivo = !!d.live; KICK = d;
 
-pintarProximo();
+pintarProximo(); pintarLive(); if (d.seguidores) setStat("#st-kick", d.seguidores, "seguidores");
 
 DATA.kick = (d.vods || []).map((v) => ({ ...v, tipo: "kickvod" }));
 
@@ -317,6 +373,8 @@ let d = { videos: [] };
 try { d = await (await fetch("/api/youtube")).json(); } catch (_) {}
 
 DATA.youtube = (d.videos || []).map((v) => ({ ...v, tipo: "youtube" }));
+
+if (d.subs) setStat("#st-yt", d.subs, "suscriptores");
 
 if (!DATA.youtube.length) { // sin API: lista oficial de reproducción con todos los videos del canal
 
@@ -370,7 +428,9 @@ if (v.thumb) { fila($("#rail-tt"), DATA.tiktok, "tall", "Próximamente"); pintar
 
 $("#tt-embed").innerHTML = `<blockquote class="tiktok-embed" cite="${ttUrl}" data-unique-id="${CONFIG.tiktok}" data-embed-type="creator" style="max-width:780px;min-width:288px;"><section><a target="_blank" rel="noopener" href="${ttUrl}?refer=creator_embed">@${CONFIG.tiktok}</a></section></blockquote>`;
 
-const s = document.createElement("script"); s.async = true; s.src = "https://www.tiktok.com/embed.js"; document.body.append(s);
+const cargarEmbed = () => { const s = document.createElement("script"); s.async = true; s.src = "https://www.tiktok.com/embed.js"; document.body.append(s); };
+
+if ("IntersectionObserver" in window) { const o = new IntersectionObserver((en) => { if (en.some((x) => x.isIntersecting)) { o.disconnect(); cargarEmbed(); } }, { rootMargin: "400px" }); o.observe($("#tiktok")); } else cargarEmbed();
 
 }
 
@@ -500,7 +560,11 @@ const g = d.guild; if (!g) return;
 
 if (g.icon) { const i = new Image(); i.className = "dc-icon"; i.alt = ""; i.src = `https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png?size=128`; c.prepend(i); }
 
-c.querySelector("b").textContent = `Sumate a ${g.name}`;
+let nom = (g.name || "").normalize("NFKC").trim().replace(/\s+/g, " ");
+
+if (nom.split(" ").every((t) => t.length <= 1)) nom = nom.replace(/ /g, "");
+
+c.querySelector("b").textContent = `Sumate a ${CONFIG.discordNombre || nom}`;
 
 if (d.approximate_member_count) c.querySelector("span").textContent = `${d.approximate_member_count.toLocaleString("es-AR")} miembros · ${(d.approximate_presence_count || 0).toLocaleString("es-AR")} en línea`;
 
@@ -610,3 +674,95 @@ $("#lista-horarios").innerHTML = CONFIG.horario
 $("#lista-setup").innerHTML = CONFIG.setup
 
 .map((s) => `<li><span>${s.item}</span><b>${s.valor}</b></li>`).join("");
+
+
+
+/* ---- Barra "estoy en vivo" + seguidores ---- */
+
+const fmtN = (n) => new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(n);
+
+function setStat(sel, n, txt) { const e = $(sel); e.textContent = `${fmtN(n)} ${txt}`; e.hidden = false; }
+
+function pintarLive() {
+
+$("#livebar").hidden = !enVivo;
+
+document.body.classList.toggle("live", enVivo);
+
+if (enVivo) $("#livebar-t").textContent = KICK.titulo ? `· ${KICK.titulo}` : "";
+
+}
+
+$("#livebar-btn").addEventListener("click", abrirKick);
+
+// revisa cada minuto si empezó o terminó el directo
+
+setInterval(async () => {
+
+try {
+
+const d = await (await fetch("/api/kick")).json();
+
+if (!!d.live !== enVivo) { enVivo = !!d.live; KICK = d; pintarProximo(); pintarLive(); armarSlides(); }
+
+} catch (_) {}
+
+}, 60000);
+
+
+
+/* ---- Clips destacados ---- */
+
+const CLIPS = CONFIG.clips.map((c) => ({ ...c, thumb: c.thumb || (c.tipo === "youtube" ? `https://i.ytimg.com/vi/${c.id}/hqdefault.jpg` : "") }));
+
+if (CLIPS.length) { $("#clips").hidden = false; fila($("#rail-clips"), CLIPS, "med", ""); }
+
+
+
+/* ---- Qué hago, comandos y reglas ---- */
+
+$("#canal-grid").innerHTML = CONFIG.contenido.map((c) => `<article class="cap"><h3>${c.titulo}</h3><p>${c.texto}</p></article>`).join("");
+
+$("#lista-cmds").innerHTML = CONFIG.comandos.map((c) => `<li><b>${c.cmd}</b><span>${c.desc}</span></li>`).join("");
+
+$("#lista-reglas").innerHTML = CONFIG.reglas.map((r) => `<li>${r}</li>`).join("");
+
+
+
+/* ---- Avisos de directos (mail o Discord) ---- */
+
+(() => {
+
+const cap = $("#cap-avisos");
+
+if (CONFIG.avisosUrl) {
+
+cap.hidden = false; $("#avisos-form").hidden = false;
+
+$("#avisos-form").addEventListener("submit", async (e) => {
+
+e.preventDefault();
+
+const msg = $("#avisos-msg"); msg.hidden = false; msg.textContent = "Enviando...";
+
+try {
+
+const r = await fetch(CONFIG.avisosUrl, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify({ email: $("#avisos-mail").value }) });
+
+if (!r.ok) throw 0;
+
+msg.textContent = "¡Listo! Te vamos a avisar."; $("#avisos-form").hidden = true;
+
+} catch (_) { msg.textContent = "No pude guardar tu mail. Probá de nuevo en un rato."; }
+
+});
+
+} else if (dc) {
+
+cap.hidden = false; $("#avisos-txt").textContent = "Activá las notificaciones en el Discord y te enterás apenas arranca el directo.";
+
+const b = $("#avisos-dc"); b.href = dc.url; b.hidden = false;
+
+}
+
+})();
