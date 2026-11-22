@@ -101,3 +101,10 @@ dialog[open]{animation:abrir .25s ease-out}
 .tt-embed{display:flex;justify-content:center;margin-top:12px}
 .tt-embed:empty{display:none}
 .poster .fecha{position:absolute;z-index:2;top:12px;right:12px;font-size:.75rem;font-weight:600;padding:3px 8px;border-radius:6px;background:rgba(13,5,24,.8)}
+
+/* logo DANY-USH */
+.poster{font-family:var(--body)}
+.logo{gap:10px;text-decoration:none;color:var(--text);font-size:1.05rem}
+.logo img{height:46px;filter:drop-shadow(0 4px 12px rgba(139,92,246,.55))}
+.hero-logo{display:block;width:clamp(96px,11vw,136px);height:auto;margin:0 0 14px -6px;
+  filter:drop-shadow(0 12px 32px rgba(139,92,246,.7))}

@@ -1,7 +1,7 @@
 /* ============ CONFIG: lo único que hay que editar ============ */
 const CONFIG = {
-  nombre: "Daniel Quiroga",
-  siglas: "DQ",                       // se muestra si no hay img/logo.png
+  nombre: "DANY-USH",
+  logo: "img/logo.png",
   tagline: "Directos, videos y reels en un solo lugar.",
   kick: "danielquiroga64",            // kick.com/USUARIO
   youtubeCanal: "https://www.youtube.com/",   // link del canal
@@ -96,7 +96,7 @@ function pintarProximo() {
   const m = Math.max(0, Math.floor((t - Date.now()) / 60000));
   const cuenta = m >= 1440 ? `en ${Math.floor(m / 1440)} d ${Math.floor((m % 1440) / 60)} h` : m >= 60 ? `en ${Math.floor(m / 60)} h ${m % 60} min` : `en ${m} min`;
   const dia = new Date(t - 3 * 3600e3).toLocaleDateString("es-AR", { weekday: "long", timeZone: "UTC" });
-  const hora = new Date(t - 3 * 3600e3).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
+  const hora = new Date(t - 3 * 3600e3).toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: "UTC" });
   el.innerHTML = `Próximo directo: ${dia} ${hora} h<small>${cuenta} (hora Argentina)</small>`;
 }
 setInterval(pintarProximo, 30000);

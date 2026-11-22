@@ -3,9 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Daniel Quiroga | Directos, videos y reels</title>
-  <meta name="description" content="Página oficial de Daniel Quiroga: directos de Kick, videos de YouTube y reels de TikTok en un solo lugar.">
+  <script src="app.js" defer></script>
+  <title>DANY-USH | Directos, videos y reels</title>
+  <meta name="description" content="Página oficial de DANY-USH: directos de Kick, videos de YouTube y reels de TikTok en un solo lugar.">
   <meta name="theme-color" content="#0d0518">
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <meta property="og:image" content="img/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Unbounded:wght@500;800&display=swap" rel="stylesheet">
@@ -13,13 +16,14 @@
 </head>
 <body>
   <header class="top">
-    <a class="logo" href="#"><img id="logo" src="img/logo.png" alt="" onerror="this.replaceWith(document.createTextNode(CONFIG.siglas))"></a>
+    <a class="logo" href="#"><img src="img/logo.png" alt=""><span>DANY-USH</span></a>
     <nav><a href="#kick">Kick</a><a href="#youtube">YouTube</a><a href="#tiktok">TikTok</a></nav>
   </header>
 
   <main>
     <section class="hero">
       <div class="hero-text">
+        <img class="hero-logo" src="img/logo.png" alt="Logo de DANY-USH">
         <h1 id="nombre"></h1>
         <p id="tagline"></p>
         <div class="proximo" id="proximo"></div>
@@ -67,6 +71,5 @@
     <div class="marco" id="marco"></div>
   </dialog>
 
-  <script src="app.js"></script>
 </body>
 </html>
