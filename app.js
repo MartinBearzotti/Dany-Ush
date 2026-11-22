@@ -46,6 +46,22 @@ horario: [
 
 // Reels de TikTok a mano (opcional, complementa el perfil embebido)
 
+bannerOffline: "img/og.png", // imagen fija cuando Kick está offline
+
+jugando: "El Señor de los Anillos: La Batalla por la Tierra Media",
+
+setup: [
+
+{ item: "Procesador", valor: "Intel Core i5" },
+
+{ item: "Placa de video", valor: "NVIDIA GeForce" },
+
+{ item: "RAM", valor: "16 GB DDR4" },
+
+{ item: "Micrófono / Auris", valor: "A completar" },
+
+],
+
 tiktokVideos: [
 
 // { id: "7301234567890123456", titulo: "Título", thumb: "img/portada1.jpg" },
@@ -64,7 +80,7 @@ let enVivo = false;
 
 const DATA = { kick: [], youtube: [], tiktok: [] };
 
-let filtro = "todo", visibles = 12, proxT = null;
+let filtro = "todo", visibles = 12, proxT = null, busqueda = "";
 
 let slides = [], idx = 0, timer = null, pausa = false, KICK = { live: false };
 
@@ -102,7 +118,37 @@ tiktok: (id) => [`https://www.tiktok.com/embed/v2/${id}`, "v9"],
 
 };
 
+let linkActual = kickUrl;
+
+const LINKS = {
+
+kick: (id) => `https://kick.com/${id}`,
+
+kickvod: (id) => `https://kick.com/${CONFIG.kick}/videos/${id}`,
+
+youtube: (id) => `https://youtu.be/${id}`,
+
+tiktok: (id) => `https://www.tiktok.com/@${CONFIG.tiktok}/video/${id}`,
+
+};
+
+$("#copiar-link").addEventListener("click", async () => {
+
+try {
+
+await navigator.clipboard.writeText(linkActual);
+
+const b = $("#copiar-link"); b.textContent = "¡Copiado!";
+
+setTimeout(() => (b.textContent = "Copiar link"), 1800);
+
+} catch (_) {}
+
+});
+
 function abrir(tipo, id, titulo) {
+
+linkActual = LINKS[tipo] ? LINKS[tipo](id) : kickUrl;
 
 const [src, ratio] = EMBEDS[tipo](id);
 
@@ -324,6 +370,10 @@ const s = document.createElement("script"); s.async = true; s.src = "https://www
 
 }
 
+$("#grid").innerHTML = Array(6).fill('<div class="poster med skel"></div>').join("");
+
+$("#buscar").addEventListener("input", (e) => { busqueda = e.target.value.trim().toLowerCase(); visibles = 12; pintarUltimo(); });
+
 pintarProximo(); cargarKick(); cargarYouTube(); cargarTikTok();
 
 
@@ -384,7 +434,7 @@ function pintarUltimo() {
 
 const todos = Object.entries(DATA).flatMap(([plat, arr]) => arr.map((v) => ({ ...v, plat })))
 
-.filter((v) => filtro === "todo" || v.plat === filtro)
+.filter((v) => (filtro === "todo" || v.plat === filtro) && (!busqueda || (v.titulo || "").toLowerCase().includes(busqueda)))
 
 .sort((x, y) => new Date(y.fecha || 0) - new Date(x.fecha || 0));
 
@@ -448,7 +498,7 @@ function armarSlides() {
 
 const k = { tipo: "kick", id: CONFIG.kick, plat: "kick", vivo: !!KICK.live,
 
-titulo: KICK.live ? (KICK.titulo || "Directo en Kick") : "Directo en Kick: ahora offline", thumb: KICK.live ? KICK.thumb : "" };
+titulo: KICK.live ? (KICK.titulo || "Directo en Kick") : "Directo en Kick: ahora offline", thumb: KICK.live ? KICK.thumb : CONFIG.bannerOffline };
 
 const listas = [[k], DATA.youtube.slice(0, 3).map((v) => ({ ...v, plat: "youtube" })),
 
@@ -522,4 +572,19 @@ const stage = $("#stage") || document.body;
 
 ["mouseleave", "focusout"].forEach((e) => stage.addEventListener(e, () => (pausa = false)));
 
-iniciarRotacion(); 
+iniciarRotacion();
+
+
+/* ---- Horarios y Setup ---- */
+
+const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+$("#juego-actual").textContent = CONFIG.jugando;
+
+$("#lista-horarios").innerHTML = CONFIG.horario
+
+.map((h) => `<li><b>${DIAS[h.dia]}</b><span>${h.hora} h (ARG)</span></li>`).join("");
+
+$("#lista-setup").innerHTML = CONFIG.setup
+
+.map((s) => `<li><span>${s.item}</span><b>${s.valor}</b></li>`).join("");

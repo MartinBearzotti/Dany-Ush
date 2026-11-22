@@ -56,7 +56,13 @@
     </section>
 
     <section class="row" id="ultimo">
-      <div class="row-head"><h2>Lo último</h2><div class="chips" id="chips"></div></div>
+      <div class="row-head">
+        <h2>Lo último</h2>
+        <div class="filtros-wrap">
+          <input class="buscador" id="buscar" type="search" placeholder="Buscar video o clip..." aria-label="Buscar contenido">
+          <div class="chips" id="chips"></div>
+        </div>
+      </div>
       <div class="grid" id="grid"></div>
       <div class="mas-wrap"><button class="btn" id="mas" type="button" hidden>Ver más</button></div>
     </section>
@@ -93,6 +99,21 @@
       </div>
     </section>
 
+    <section class="row" id="info">
+      <div class="row-head"><h2>Horarios y Setup</h2></div>
+      <div class="info-grid">
+        <div class="info-card">
+          <h3>Jugando ahora</h3>
+          <p class="juego-actual" id="juego-actual"></p>
+          <ul class="lista-horarios" id="lista-horarios"></ul>
+        </div>
+        <div class="info-card">
+          <h3>Mi Setup</h3>
+          <ul class="lista-setup" id="lista-setup"></ul>
+        </div>
+      </div>
+    </section>
+
     <section class="row" id="contacto">
       <div class="row-head"><h2>Comunidad y contacto</h2></div>
       <div class="bento" id="bento">
@@ -119,8 +140,13 @@
   </footer>
 
   <dialog id="visor">
-    <button class="cerrar" id="cerrar" type="button" aria-label="Cerrar">&times;</button>
-    <p class="visor-titulo" id="visor-titulo"></p>
+    <div class="visor-bar">
+      <p class="visor-titulo" id="visor-titulo"></p>
+      <div class="visor-btns">
+        <button class="btn-copiar" id="copiar-link" type="button">Copiar link</button>
+        <button class="cerrar" id="cerrar" type="button" aria-label="Cerrar">&times;</button>
+      </div>
+    </div>
     <div class="marco" id="marco"></div>
   </dialog>
 
