@@ -1,6 +1,6 @@
 // Vercel serverless: seguidores de cada plataforma, rápido y liviano (sin listas de videos).
-// Uso: /api/seguidores?p=kick | youtube | tiktok   (sin "p" devuelve las tres)
-// Env (todas opcionales): KICK_SLUG, YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID, TIKTOK_USER
+// Uso: /api/seguidores?p=kick | youtube | tiktok | discord   (sin "p" devuelve las cuatro)
+// Env (todas opcionales): KICK_SLUG, YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID, TIKTOK_USER, DISCORD_TOKEN, DISCORD_GUILD_ID
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36";
 const num = (s) => { const n = Number(String(s).replace(/[.,\s]/g, "")); return n > 0 ? n : null; };
 
@@ -50,6 +50,17 @@ async function tiktok(user) {
   return m ? num(m[1]) : null;
 }
 
+async function discord(guildId, token) {
+  if (!guildId || !token) return null;
+  const r = await fetch(`https://discord.com/api/v10/guilds/${guildId}/members?limit=1000`, {
+    signal: AbortSignal.timeout(3000),
+    headers: { Authorization: `Bot ${token}` },
+  });
+  if (!r.ok) return null;
+  const members = await r.json();
+  return Array.isArray(members) ? members.filter((m) => !m.user?.bot).length : null;
+}
+
 export default async function handler(req, res) {
   const env = process.env;
   const slug = env.KICK_SLUG && !/^CAMBIAR/i.test(env.KICK_SLUG) ? env.KICK_SLUG : "danyush";
@@ -57,6 +68,7 @@ export default async function handler(req, res) {
     kick: () => kick(slug),
     youtube: () => youtube(env.YOUTUBE_CHANNEL_ID || "UCG7poDcbGtKNc4hAQWBvqpA", env.YOUTUBE_API_KEY),
     tiktok: () => tiktok(env.TIKTOK_USER || "dany_ush_oficial"),
+    discord: () => discord(env.DISCORD_GUILD_ID || "1099019810697908244", env.DISCORD_TOKEN),
   };
   const p = new URL(req.url, "http://x").searchParams.get("p");
   const pedidas = fuentes[p] ? [p] : Object.keys(fuentes);
