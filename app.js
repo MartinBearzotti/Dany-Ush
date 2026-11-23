@@ -216,7 +216,7 @@ function pintarProximo() {
   el.hidden = false;
   const t = proximoDirecto();
   if (!t) {
-    el.innerHTML = 'Directos sin horario fijo<small>Activá la campanita en Kick o sumate al Discord para enterarte cuando prende</small>';
+    el.innerHTML = 'Directos sin horario fijo<small>Activá la campanita en Kick y en Tik-Tok o sumate al Discord para enterarte cuando prende</small>';
     return;
   }
   const m = Math.max(0, Math.floor((t - Date.now()) / 60000));
