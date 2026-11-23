@@ -34,7 +34,7 @@ const CONFIG = {
   // Si el nombre del Discord se ve raro, escribí acá el que quieras mostrar
   discordNombre: "",
   // Números a mano por si alguna plataforma no entrega el dato sola (0 = no mostrar). Los automáticos tienen prioridad.
-  seguidores: { kick: 0, youtube: 0, tiktok: 11148, discord: 63 },
+  seguidores: { kick: 0, youtube: 0, tiktok: 0, discord: 0 },
   seguidoresPiso: ["tiktok"], // piso: TikTok nunca muestra menos que el número de arriba (subilo a mano cada tanto). Sacá "tiktok" de la lista para que sea 100% automático.
   tiktokVideos: [ // reels a mano: se usan SOLO si la API de TikTok no trae nada
     { id: "7710750350315097345", titulo: "no entiendo nada!!!... #directos #stream #backseatchampions", fecha: "2026-11-21T22:11:13Z" },
