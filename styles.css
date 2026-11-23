@@ -451,3 +451,6 @@ section[id]{scroll-margin-top:100px}
 .hero-poster .hero-blur,.hero-poster .hero-fg{display:none;position:absolute;inset:0}
 .hero-poster.vertical .hero-blur{display:block;background:var(--thumb) center/cover no-repeat;filter:blur(26px) brightness(.5) saturate(1.2);transform:scale(1.25)}
 .hero-poster.vertical .hero-fg{display:block;background:var(--thumb) center/contain no-repeat;margin:10px 0 64px}
+
+.foot-legal{flex-basis:100%;margin:0;font-size:.75rem;line-height:1.5;opacity:.7}
+.avisos-priv{font-size:.78rem;opacity:.7}
