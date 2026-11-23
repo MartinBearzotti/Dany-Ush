@@ -266,15 +266,25 @@ body.live .row{scroll-margin-top:124px}
 .seg-panel .row-head h2{font-size:clamp(1.3rem,3vw,1.9rem)}
 .seg-panel .seg-total{background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(135deg,var(--violet),var(--magenta),var(--cyan)) border-box;box-shadow:0 0 70px -24px var(--magenta)}
 .seg-panel .seg .n{font-size:clamp(1.8rem,3.4vw,2.4rem)}
-.donar-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
-.donar-alias{margin-top:10px;color:var(--text)!important}
+.donar-btns{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+.donar-b{--b:#009ee3;position:relative;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;font:inherit;color:var(--text);padding:12px 18px 12px 12px;border-radius:20px;border:1px solid color-mix(in srgb,var(--b) 40%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--b) 22%,transparent),rgba(255,255,255,.03));overflow:hidden;transition:transform .25s,box-shadow .25s,border-color .25s}
+.donar-b.pp{--b:#2a6fdb}
+.donar-b::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.14) 50%,transparent 65%);transform:translateX(-120%);transition:transform .7s}
+.donar-b:hover,.donar-b:focus-visible{transform:translateY(-3px);border-color:var(--b);box-shadow:0 14px 34px -14px var(--b),0 0 0 3px color-mix(in srgb,var(--b) 25%,transparent);outline:0}
+.donar-b:hover::after{transform:translateX(120%)}
+.donar-b:active{transform:translateY(-1px) scale(.99)}
+.d-ico{flex:none;width:56px;height:56px;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:#fff;box-shadow:0 6px 16px -6px rgba(0,0,0,.6)}
+.d-ico img{width:100%;height:100%;object-fit:cover;display:block}
+.donar-b.pp .d-ico img{width:70%;height:70%;object-fit:contain}
+.d-txt{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.d-txt b{font-size:1.05rem;font-weight:800}
+.d-txt small{font-size:.8rem;color:var(--muted,#b9a8d8);opacity:.9}
+.d-go{flex:none;font-size:1.3rem;font-weight:800;color:var(--b);transition:transform .25s}
+.donar-b:hover .d-go{transform:translateX(5px)}
+.donar-alias{margin-top:12px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);color:var(--text)!important}
 .donar-alias b{color:var(--violet-soft);user-select:all}
-.donar-b{display:inline-flex;align-items:center;gap:12px;cursor:pointer;font:inherit;font-weight:800;color:#1a1a2e;background:#fff;border:0;border-radius:16px;padding:8px 22px 8px 10px;transition:transform .2s,box-shadow .2s}
-.donar-b img{width:48px;height:48px;object-fit:contain;flex:none;border-radius:50%}
-.donar-b.pp img{border-radius:10px}
-.donar-b.mp{box-shadow:0 10px 30px -12px #009ee3}
-.donar-b.pp{box-shadow:0 10px 30px -12px #0070ba}
-.donar-b:hover{transform:translateY(-3px)}
+@media(max-width:420px){.d-txt small{display:none}}
+@media(prefers-reduced-motion:reduce){.donar-b,.donar-b::after,.d-go{transition:none}}
 .hero-actions{position:relative;z-index:20}
 .seguime-item{display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border-radius:16px;color:var(--text);text-decoration:none;font-weight:700;transition:background .15s,transform .15s}
 .seguime-item svg{width:28px;height:28px;flex:none}
