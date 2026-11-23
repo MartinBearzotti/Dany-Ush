@@ -17,7 +17,7 @@ const num = (s) => { const n = Number(s); return Number.isFinite(n) && n >= 0 ? 
 // seguidores: se lee del perfil público (mejor esfuerzo, TikTok suele bloquearlo). Máx. 2,5 s
 async function leerSeguidores(user) {
   try {
-    const r = await fetch(`https://www.tiktok.com/@${user}`, { signal: AbortSignal.timeout(2500), headers: HEAD });
+    const r = await fetch(`https://www.tiktok.com/@${user}`, { signal: AbortSignal.timeout(2000), headers: HEAD });
     if (!r.ok) return null;
     const html = await r.text();
     // primero el dato exacto del perfil (statsV2); el primer "followerCount" suelto puede ser un número redondeado
@@ -66,7 +66,7 @@ async function vistasDe(id, user) {
 }
 
 async function leerVideos(url) {
-  const r = await fetch(url, { signal: AbortSignal.timeout(6000), headers: { "User-Agent": UA } });
+  const r = await fetch(url, { signal: AbortSignal.timeout(3500), headers: { "User-Agent": UA } });
   if (!r.ok) throw new Error(`RSS respondió ${r.status}`);
   const xml = await r.text();
   return [...xml.matchAll(/<item>[\s\S]*?<\/item>/g)].map(([it]) => {
@@ -93,19 +93,19 @@ export default async function handler(req, res) {
 
   const segP = leerSeguidores(user); // corre mientras se lee el feed
   let vids = [], url = null; const errores = {};
-  for (const u of candidatos) {
-    try { vids = await leerVideos(u); } catch (e) { errores[u] = String(e.message || e); vids = []; }
-    if (vids.length) { url = u; break; }
-    errores[u] = errores[u] || "no tiene reels (¿es el link del feed RSS?)";
-  }
-  const seg = { status: "fulfilled", value: await segP };
+  // se prueban todos los feeds a la vez y se usa el primero (en orden) que traiga reels
+  const rs = await Promise.all(candidatos.map(async (u) => {
+    try { return await leerVideos(u); } catch (e) { errores[u] = String(e.message || e); return []; }
+  }));
+  candidatos.forEach((u, i) => { if (!url && rs[i].length) { vids = rs[i]; url = u; } else if (!rs[i].length) errores[u] = errores[u] || "no tiene reels (¿es el link del feed RSS?)"; });
+  const seg = { value: await segP };
   const out = { videos: vids };
   if (seg.value) out.seguidores = seg.value;
 
   // visualizaciones de los reels más nuevos (todas a la vez, con tope de tiempo)
   if (out.videos.length) {
     const nuevos = out.videos.slice(0, 12);
-    const tope = new Promise((ok) => setTimeout(ok, 3800));
+    const tope = new Promise((ok) => setTimeout(ok, 2500));
     await Promise.race([
       Promise.all(nuevos.map(async (v) => { const n = await vistasDe(v.id, user); if (n != null) v.vistas = n; })),
       tope,
