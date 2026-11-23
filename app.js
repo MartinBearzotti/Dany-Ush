@@ -232,10 +232,17 @@ function pintarProximo() {
 setInterval(pintarProximo, 30000);
 
 /* ---- datos automáticos ---- */
+async function estadoRapido() { // estado en vivo primero y rápido, sin esperar streams anteriores ni seguidores
+  try {
+    const d = await (await fetch("/api/kick?live=1")).json();
+    if (d.live) { KICK = { ...KICK, ...d }; enVivo = true; pintarProximo(); pintarLive(); armarSlides(); }
+  } catch (_) {}
+}
+
 async function cargarKick() {
   let d = { live: false, vods: [] };
   try { d = await (await fetch("/api/kick")).json(); } catch (_) {}
-  KICK = d; enVivo = !!d.live || ttVivo;
+  KICK = d.live || !KICK.live ? d : { ...d, live: true, viewers: KICK.viewers, titulo: KICK.titulo, thumb: KICK.thumb }; enVivo = !!KICK.live || ttVivo;
   pintarProximo(); pintarLive();
   if (d.seguidores) { setSeg("kick", d.seguidores); }
   const vistos = new Set(), todos = [...(CONFIG.kickVods || []), ...(d.vods || [])];
@@ -284,7 +291,7 @@ async function cargarTikTok() {
   });
 }
 
-pintarProximo(); cargarKick(); cargarTikTokLive(); cargarYouTube(); cargarTikTok();
+pintarProximo(); estadoRapido(); cargarKick(); cargarTikTokLive(); cargarYouTube(); cargarTikTok();
 
 /* ---- calendario (.ics) ---- */
 $("#proximo").addEventListener("click", (e) => { if (e.target.id === "btn-cal" && proxT) descargarICS(proxT); });
@@ -347,7 +354,7 @@ function armarSlides() {
   const k = {
     tipo: "kick", id: CONFIG.kick, plat: "kick", vivo: !!KICK.live,
     titulo: KICK.live ? (KICK.titulo || "Directo en Kick") : "Directo en Kick: ahora offline",
-    thumb: KICK.live ? KICK.thumb : CONFIG.bannerOffline
+    thumb: (KICK.live && KICK.thumb) || CONFIG.bannerOffline
   };
   const tl = ttVivo && !KICK.live ? [{ tipo: "ttlive", plat: "tiktok", vivo: true, id: CONFIG.tiktok, titulo: TT.titulo || "Directo en TikTok", thumb: CONFIG.bannerOffline }] : [];
   const listas = [
@@ -411,18 +418,18 @@ function pintarLive() {
 $("#live-pill").addEventListener("click", abrirKick);
 $("#livebar-btn").addEventListener("click", abrirKick);
 
-// revisa cada minuto si empezó o terminó el directo
+// revisa cada 20 segundos si empezó o terminó el directo
 setInterval(async () => {
   if (document.hidden) return; // pestaña en segundo plano: no gasta llamadas
   try {
     const [d, t] = await Promise.all([
-      fetch("/api/kick").then((r) => r.json()).catch(() => KICK),
+      fetch("/api/kick?live=1").then((r) => r.json()).catch(() => KICK),
       fetch("/api/tiktok-live").then((r) => r.json()).catch(() => TT),
     ]);
     const nuevo = !!d.live || !!t.live;
     if (nuevo !== enVivo || !!t.live !== ttVivo || !!d.live !== !!KICK.live) { KICK = d; TT = t; ttVivo = !!t.live; enVivo = nuevo; pintarProximo(); pintarLive(); armarSlides(); }
   } catch (_) {}
-}, 60000);
+}, 20000);
 
 /* ---- Clips destacados ---- */
 const CLIPS = CONFIG.clips.map((c) => ({ ...c, thumb: c.thumb || (c.tipo === "youtube" ? `https://i.ytimg.com/vi/${c.id}/hqdefault.jpg` : "") }));
