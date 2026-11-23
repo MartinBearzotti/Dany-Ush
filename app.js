@@ -125,7 +125,7 @@ function abrir(tipo, id, titulo, video, thumb) {
   const [src, ratio] = EMBEDS[tipo](id);
   const ifr = (s) => `<iframe src="${s}" title="${esc(titulo)}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   marco.className = tipo === "kick" ? "marco kickchat" : `marco ${ratio}`;
-  marco.innerHTML = ifr(src) + (tipo === "kick" ? `<iframe class="chat" src="https://kick.com/popout/${id}/chat" title="Chat de Kick"></iframe>` : "");
+  marco.innerHTML = ifr(src) + (tipo === "kick" ? `<div class="chatcol"><iframe class="chat" src="https://kick.com/popout/${id}/chat" title="Chat de Kick"></iframe><div class="chat-pie"><span>Chat solo para ver</span><a class="btn primary" href="${kickUrl}" target="_blank" rel="noopener">Escribir en Kick</a></div></div>` : "");
   visor.showModal();
 }
 
@@ -388,7 +388,7 @@ function mostrar(i, anim) {
   p.classList.toggle("vertical", vert);
   p.classList.toggle("offline", s.tipo === "kick" && !s.vivo);
   b.className = "badge " + (s.vivo ? "live" : s.plat);
-  b.textContent = s.vivo ? `EN VIVO${s.tipo === "ttlive" ? " · TikTok" : ""}${(s.tipo === "ttlive" ? TT.viewers : KICK.viewers) ? " · " + (s.tipo === "ttlive" ? TT.viewers : KICK.viewers) : ""}` : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : "");
+  { const v = s.tipo === "ttlive" ? TT.viewers : KICK.viewers; b.textContent = s.vivo ? (v != null ? String(v) : "EN VIVO") : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : ""); b.title = s.vivo && v != null ? `En vivo · ${v} espectadores` : ""; }
   $("#titulo-kick").textContent = s.titulo || "";
   document.querySelectorAll("#dots button").forEach((d, n) => d.setAttribute("aria-current", n === i));
   if (anim) { p.classList.remove("entra"); void p.offsetWidth; p.classList.add("entra"); }
@@ -428,6 +428,7 @@ async function revisarEnVivo() {
     ]);
     const nuevo = !!d.live || !!t.live;
     if (nuevo !== enVivo || !!t.live !== ttVivo || !!d.live !== !!KICK.live) { KICK = d; TT = t; ttVivo = !!t.live; enVivo = nuevo; pintarProximo(); pintarLive(); armarSlides(); }
+    else if (enVivo) mostrar(idx, false); // actualiza el número de espectadores
   } catch (_) {}
 }
 setInterval(revisarEnVivo, 10000);
