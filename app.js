@@ -483,7 +483,7 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // 1) "Acá jugamos ___" con efecto máquina de escribir (editá las palabras a gusto)
-  const PAL = ["Valorant", "F1", "Among Us", "con la comunidad"];
+  const PAL = ["Valorant", "F1", " juegos entrenidos", "con la comunidad", "y la pasamos bien"];
   const p = document.createElement("p"); p.className = "rotador";
   p.innerHTML = 'Acá jugamos <b></b><span class="cursor" aria-hidden="true"></span>';
   $("#tagline").after(p);
