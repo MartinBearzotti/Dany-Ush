@@ -25,36 +25,13 @@ const CONFIG = {
     { dia: 6, hora: "22:00" },
   ],
   bannerOffline: "/og-v2.png", // imagen fija cuando Kick está offline
-  jugando: "Backseat Champions",
-  setup: [
-    { item: "Procesador", valor: "Intel Core i5" },
-    { item: "Placa de video", valor: "NVIDIA GeForce" },
-    { item: "RAM", valor: "16 GB DDR4" },
-    { item: "Micrófono / Auris", valor: "A completar" },
+  // Streams anteriores de Kick a mano (se suman a los automáticos). id = el código largo del video: kick.com/USUARIO/videos/ESTE-CODIGO
+  kickVods: [
+    // { id: "CODIGO-DEL-VIDEO", titulo: "Nombre del stream", fecha: "2026-11-18T22:00:00Z", thumb: "" },
   ],
   // Clips destacados a mano. tipo: "youtube" | "kickvod" | "tiktok". thumb es opcional (en YouTube se arma sola)
   clips: [
     // { tipo: "youtube", id: "ID_DEL_VIDEO", titulo: "Mi mejor momento" },
-  ],
-  // "Qué hago en el canal" (editá los textos)
-  contenido: [
-    { titulo: "Valorant", texto: "Partidas, clutches y mucho humor. Entrá al directo y jugá con la comunidad." },
-    { titulo: "F1, Among Us y más", texto: "Carreras, juegos de deducción y de todo un poco." },
-    { titulo: "Directos con la comunidad", texto: "Charla, risas y jugar juntos. Pasá y quedate un rato." },
-    { titulo: "Clips y reels", texto: "Los mejores momentos, cortitos, en YouTube y TikTok." },
-  ],
-  // Comandos del chat (EJEMPLOS: cambialos por los tuyos)
-  comandos: [
-    { cmd: "!discord", desc: "Link al servidor de Discord" },
-    { cmd: "!horario", desc: "Días y horas de directo" },
-    { cmd: "!setup", desc: "Mi PC y mi equipo" },
-  ],
-  // Reglas del chat (EJEMPLOS: cambialas por las tuyas)
-  reglas: [
-    "Respeto para todos: nada de insultos ni discriminación.",
-    "No spamear ni mandar links sin permiso.",
-    "Sin spoilers del juego.",
-    "Pasarla bien: el fin es divertirse.",
   ],
   // Para avisos por mail: URL de un formulario (Formspree, Getform, etc.). Vacío = se ofrece Discord
   avisosUrl: "",
@@ -82,6 +59,7 @@ const CONFIG = {
 /* ============================================================ */
 
 const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const kickUrl = `https://kick.com/${CONFIG.kick}`, ttUrl = `https://www.tiktok.com/@${CONFIG.tiktok}`;
 let enVivo = false;
 const DATA = { kick: [], youtube: [], tiktok: [] };
@@ -129,7 +107,7 @@ function abrir(tipo, id, titulo) {
   linkActual = LINKS[tipo] ? LINKS[tipo](id) : kickUrl;
   if (tipo === "kickclip") { window.open(linkActual, "_blank", "noopener"); return; } // los clips de Kick se ven en Kick
   const [src, ratio] = EMBEDS[tipo](id);
-  const ifr = (s) => `<iframe src="${s}" title="${titulo}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  const ifr = (s) => `<iframe src="${s}" title="${esc(titulo)}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   marco.className = tipo === "kick" ? "marco kickchat" : `marco ${ratio}`;
   marco.innerHTML = ifr(src) + (tipo === "kick" ? `<iframe class="chat" src="https://kick.com/popout/${id}/chat" title="Chat de Kick"></iframe>` : "");
   $("#visor-titulo").textContent = titulo;
@@ -232,9 +210,14 @@ async function cargarKick() {
   try { d = await (await fetch("/api/kick")).json(); } catch (_) {}
   enVivo = !!d.live; KICK = d;
   pintarProximo(); pintarLive();
-  if (d.seguidores) { setStat("#st-kick", d.seguidores, "seguidores"); setSeg("kick", d.seguidores); }
-  DATA.kick = (d.vods || []).map((v) => ({ ...v, tipo: "kickvod" }));
-  fila($("#rail-kick"), DATA.kick.slice(0, 12), "med", "Próximamente");
+  if (d.seguidores) { setSeg("kick", d.seguidores); }
+  const vistos = new Set(), todos = [...(CONFIG.kickVods || []), ...(d.vods || [])];
+  DATA.kick = todos.filter((v) => v.id && !vistos.has(v.id) && vistos.add(v.id)).map((v) => ({ ...v, tipo: "kickvod" }));
+  const rk = $("#rail-kick");
+  rk.innerHTML = "";
+  if (DATA.kick.length) fila(rk, DATA.kick.slice(0, 12), "med", "");
+  // acceso directo a todos los streams (la API de Kick no siempre los entrega)
+  rk.insertAdjacentHTML("beforeend", `<a class="kick-cta" href="${kickUrl}/videos" target="_blank" rel="noopener"><div><b>${DATA.kick.length ? "Ver más streams en Kick" : "Mirá los streams anteriores en Kick"}</b><span>Todos los directos del canal, completos.</span></div><em>Ver streams</em></a>`);
   armarSlides();
 }
 
@@ -242,7 +225,7 @@ async function cargarYouTube() {
   let d = { videos: [] };
   try { d = await (await fetch("/api/youtube")).json(); } catch (_) {}
   DATA.youtube = (d.videos || []).map((v) => ({ ...v, tipo: "youtube" }));
-  if (d.subs) { setStat("#st-yt", d.subs, "suscriptores"); setSeg("youtube", d.subs); }
+  if (d.subs) { setSeg("youtube", d.subs); }
   if (!DATA.youtube.length) { // sin API: lista oficial de reproducción con todos los videos del canal
     $("#rail-yt").innerHTML = `<iframe class="lista" src="https://www.youtube.com/embed/videoseries?list=UU${CONFIG.youtubeId.slice(2)}" title="Videos de ${CONFIG.nombre}" loading="lazy" allowfullscreen></iframe>`;
     armarSlides(); return;
@@ -292,16 +275,6 @@ function descargarICS(t) {
 $("#bio").textContent = CONFIG.bio;
 $("#tt-handle").textContent = `@${CONFIG.tiktok}`;
 document.querySelectorAll(".av").forEach((i) => (i.src = document.querySelector(".hero-logo").src));
-
-const COLOR = { Kick: "#53fc18", YouTube: "#ff2d2d", TikTok: "#22d3ee", Discord: "#5865f2", Instagram: "#e1306c", Facebook: "#1877f2", WhatsApp: "#25d366", X: "#ffffff", Twitch: "#9146ff" };
-[{ nombre: "Kick", url: kickUrl }, { nombre: "YouTube", url: CONFIG.youtubeCanal }, { nombre: "TikTok", url: ttUrl },
-  ...CONFIG.redes.filter((r) => r.nombre !== "Discord")].forEach((r) => {
-  const l = document.createElement("a");
-  l.className = "social";
-  if (r.url) { l.href = r.url; l.target = "_blank"; l.rel = "noopener"; } else { l.classList.add("off"); l.title = "Próximamente"; }
-  l.style.setProperty("--c", COLOR[r.nombre] || "#8b5cf6");
-  l.innerHTML = "<i></i>"; l.append(r.nombre); $("#redes")?.append(l);
-});
 
 const dc = CONFIG.redes.find((r) => r.nombre === "Discord" && r.url);
 if (dc) {
@@ -365,7 +338,10 @@ function mostrar(i, anim) {
   const s = slides[i]; if (!s) return;
   idx = i;
   const p = $("#poster-kick"), b = $("#badge-kick");
-  p.style.backgroundImage = s.thumb ? `url("${s.thumb}")` : "";
+  const vert = s.plat === "tiktok" && !!s.thumb; // reel vertical: se muestra entero sobre su propio fondo difuminado
+  p.style.backgroundImage = !vert && s.thumb ? `url("${s.thumb}")` : "";
+  p.style.setProperty("--thumb", vert ? `url("${s.thumb}")` : "none");
+  p.classList.toggle("vertical", vert);
   p.classList.toggle("offline", s.tipo === "kick" && !s.vivo);
   b.className = "badge " + (s.vivo ? "live" : s.plat);
   b.textContent = s.vivo ? `EN VIVO${KICK.viewers ? " · " + KICK.viewers : ""}` : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : "");
@@ -385,22 +361,17 @@ const stage = $("#stage") || document.body;
 ["mouseleave", "focusout"].forEach((e) => stage.addEventListener(e, () => (pausa = false)));
 iniciarRotacion();
 
-/* ---- Horarios y Setup ---- */
-const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-$("#juego-actual").textContent = CONFIG.jugando;
-$("#lista-horarios").innerHTML = CONFIG.horario
-  .map((h) => `<li><b>${DIAS[h.dia]}</b><span>${h.hora} h (ARG)</span></li>`).join("");
-$("#lista-setup").innerHTML = CONFIG.setup
-  .map((s) => `<li><span>${s.item}</span><b>${s.valor}</b></li>`).join("");
-
 /* ---- Barra "estoy en vivo" + seguidores ---- */
 const fmtN = (n) => new Intl.NumberFormat("es-AR", { notation: "compact", maximumFractionDigits: 1 }).format(n);
-function setStat(sel, n, txt) { const e = $(sel); if (!e) return; e.textContent = `${fmtN(n)} ${txt}`; e.hidden = false; }
 function pintarLive() {
   $("#livebar").hidden = !enVivo;
   document.body.classList.toggle("live", enVivo);
   if (enVivo) $("#livebar-t").textContent = KICK.titulo ? `· ${KICK.titulo}` : "";
+  const pill = $("#live-pill");
+  pill.classList.toggle("off", !enVivo); pill.disabled = !enVivo;
+  $("#live-pill-t").textContent = enVivo ? "EN VIVO" : "OFFLINE";
 }
+$("#live-pill").addEventListener("click", abrirKick);
 $("#livebar-btn").addEventListener("click", abrirKick);
 
 // revisa cada minuto si empezó o terminó el directo
@@ -414,11 +385,6 @@ setInterval(async () => {
 /* ---- Clips destacados ---- */
 const CLIPS = CONFIG.clips.map((c) => ({ ...c, thumb: c.thumb || (c.tipo === "youtube" ? `https://i.ytimg.com/vi/${c.id}/hqdefault.jpg` : "") }));
 if (CLIPS.length) { $("#clips").hidden = false; fila($("#rail-clips"), CLIPS, "med", ""); }
-
-/* ---- Qué hago, comandos y reglas ---- */
-$("#canal-grid").innerHTML = CONFIG.contenido.map((c) => `<article class="cap"><h3>${c.titulo}</h3><p>${c.texto}</p></article>`).join("");
-$("#lista-cmds").innerHTML = CONFIG.comandos.map((c) => `<li><b>${c.cmd}</b><span>${c.desc}</span></li>`).join("");
-$("#lista-reglas").innerHTML = CONFIG.reglas.map((r) => `<li>${r}</li>`).join("");
 
 /* ---- Avisos de directos (mail o Discord) ---- */
 (() => {
@@ -460,7 +426,10 @@ function setSeg(p, n, sub) {
   pintarTotal();
 }
 
+let segListo = false;
+setTimeout(() => { segListo = true; pintarTotal(); }, 8000);
 function pintarTotal() {
+  if (segListo) document.querySelectorAll(".seg").forEach((e) => { if (SEGLINK[e.dataset.p]) e.hidden = !SEG[e.dataset.p]; }); // sin dato: no se muestra "—"
   const visibles = Object.keys(SEG).filter((k) => SEGLINK[k]);
   const tot = visibles.reduce((x, k) => x + SEG[k], 0);
   $("#seg-total-box").hidden = !tot;
@@ -531,7 +500,7 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   }
 
   // 2) brillo violeta que sigue al mouse dentro de las tarjetas
-  document.querySelectorAll(".cap, .seg, .info-card, .pcard").forEach((el) => {
+  document.querySelectorAll(".cap, .seg").forEach((el) => {
     el.classList.add("glow-host"); el.append(document.createElement("x-glow"));
     el.addEventListener("pointermove", (e) => {
       const r = el.getBoundingClientRect();
@@ -559,7 +528,9 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   const links = [...document.querySelectorAll(".top nav a")];
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver((en) => en.forEach((x) => {
-      if (x.isIntersecting) links.forEach((a) => a.classList.toggle("activo", a.getAttribute("href") === "#" + x.target.id));
+      const a = links.find((l) => l.getAttribute("href") === "#" + x.target.id); if (!a) return;
+      if (x.isIntersecting) links.forEach((l) => l.classList.toggle("activo", l === a));
+      else a.classList.remove("activo"); // arriba de todo (portada) no queda ninguno marcado
     }), { rootMargin: "-45% 0px -50% 0px" });
     links.forEach((a) => { const sec = document.querySelector(a.getAttribute("href")); if (sec) io.observe(sec); });
   }
@@ -574,17 +545,9 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   $("#link-clips").href = clipsUrl;
   $("#clips").hidden = false;
   if (!auto.length && !CLIPS.length) { // la API no entregó clips: botón directo a los clips en Kick
-    $("#rail-clips").innerHTML = `<a class="kick-cta" href="${clipsUrl}" target="_blank" rel="noopener"><b>Mirá los clips en Kick</b><span>Los mejores momentos del canal, ordenados por más vistos.</span><em>Ver clips</em></a>`;
+    $("#rail-clips").innerHTML = `<a class="kick-cta" href="${clipsUrl}" target="_blank" rel="noopener"><div><b>Mirá los clips en Kick</b><span>Los mejores momentos del canal, ordenados por más vistos.</span></div><em>Ver clips</em></a>`;
     return;
   }
   fila($("#rail-clips"), [...CLIPS, ...auto].slice(0, 12), "med", "");
 })();
 
-/* ---- Flechas de desplazamiento para las grillas 3x2 ---- */
-document.querySelectorAll(".nav-btn").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const el = document.getElementById(btn.dataset.target);
-    if (!el) return;
-    el.scrollBy({ left: Number(btn.dataset.dir) * el.clientWidth, behavior: "smooth" });
-  });
-});
