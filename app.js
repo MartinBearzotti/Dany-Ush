@@ -192,7 +192,7 @@ function proximoDirecto() {
 function pintarProximo() {
   const el = $("#proximo");
   if (enVivo) { el.className = "proximo en-vivo"; el.innerHTML = 'Está en vivo ahora<small>Tocá "Ver el directo"</small>'; return; }
-  el.className = "proximo";
+  el.className = "proximo"; el.hidden = false;
   const t = proximoDirecto();
   if (!t) { el.hidden = true; return; }
   const m = Math.max(0, Math.floor((t - Date.now()) / 60000));
@@ -378,6 +378,7 @@ $("#livebar-btn").addEventListener("click", abrirKick);
 
 // revisa cada minuto si empezó o terminó el directo
 setInterval(async () => {
+  if (document.hidden) return; // pestaña en segundo plano: no gasta llamadas
   try {
     const d = await (await fetch("/api/kick")).json();
     if (!!d.live !== enVivo) { enVivo = !!d.live; KICK = d; pintarProximo(); pintarLive(); armarSlides(); }
@@ -439,6 +440,7 @@ function pintarTotal() {
   $("#seg-nota").textContent = visibles.some((k) => !SEG[k]) ? "Suma de las plataformas con dato disponible" : "";
 }
 Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, n));
+fetch("/api/seguidores").then((r) => r.json()).then((d) => Object.entries(d).forEach(([p, n]) => setSeg(p, n))).catch(() => {}); // números rápidos de Kick, YouTube y TikTok
 
 /* ---- Discord: abre la app directo; si no la tiene, abre la web ---- */
 function abrirDiscord(e) {
@@ -483,7 +485,7 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   const quieto = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   // 1) "Acá jugamos ___" con efecto máquina de escribir (editá las palabras a gusto)
-  const PAL = ["Valorant", "F1", " juegos entrenidos", "con la comunidad", "y la pasamos bien"];
+  const PAL = ["Valorant", "F1", "juegos entretenidos", "con la comunidad", "y la pasamos bien"];
   const p = document.createElement("p"); p.className = "rotador";
   p.innerHTML = 'Acá jugamos <b></b><span class="cursor" aria-hidden="true"></span>';
   $("#tagline").after(p);

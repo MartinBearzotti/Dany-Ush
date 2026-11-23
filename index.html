@@ -6,6 +6,7 @@
   <title>DANY-USH | Directos, videos y reels</title>
   <meta name="description" content="Página oficial de DANY-USH: directos de Kick, videos de YouTube y reels de TikTok en un solo lugar.">
   <meta name="theme-color" content="#0d0518">
+  <meta name="color-scheme" content="dark">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://dany-ush.vercel.app/">
   <link rel="canonical" href="https://dany-ush.vercel.app/">
@@ -32,14 +33,15 @@
   <link rel="apple-touch-icon" href="favicon-v2.png?v=3">
 </head>
 <body>
+  <noscript><p style="padding:16px;text-align:center">Activá JavaScript para ver los directos, videos y reels de DANY-USH.</p></noscript>
   <div class="livebar" id="livebar" hidden>
     <span class="live-dot"></span><b>Estoy en vivo</b><span id="livebar-t"></span>
     <button class="livebtn" id="livebar-btn" type="button">Ver directo</button>
   </div>
   <header class="top">
-    <a class="logo" href="#"><img src="/logo-v2.png" alt=""><span>DANY-USH</span></a>
+    <a class="logo" href="#" aria-label="DANY-USH, ir arriba"><img src="/logo-v2.png" alt="" width="40" height="40"><span>DANY-USH</span></a>
     <button class="live-pill off" id="live-pill" type="button" disabled aria-label="Estado del directo"><span class="live-dot"></span><span id="live-pill-t">OFFLINE</span></button>
-    <nav>
+    <nav aria-label="Secciones">
       <a href="#kick" style="--c:#53fc18"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#53fc18"/><path d="M6.5 5.5h3.2v4.1l3.5-4.1h3.9l-4.1 4.8 4.4 6.7h-3.9l-2.7-4.3-1.1 1.2v3.1H6.5z" fill="#0b0b0b"/></svg>Kick</a>
       <a href="#youtube" style="--c:#ff2d2d"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="4.5" width="22" height="15" rx="4.5" fill="#ff0000"/><path d="M10 8.8v6.4l5.6-3.2z" fill="#fff"/></svg>YouTube</a>
       <a href="#tiktok" style="--c:#22d3ee"><svg viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="#0b0b0b" stroke="#2e1a52" stroke-width=".8"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#25f4ee" transform="translate(-.8 .6)"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#fe2c55" transform="translate(.8 -.5)"/><path d="M12.6 4.5h2.3c.2 1.6 1.2 2.8 2.8 3.1v2.3c-1 0-1.9-.3-2.8-.9v4.9a4.2 4.2 0 1 1-4.2-4.2c.3 0 .5 0 .8.1v2.4a1.8 1.8 0 1 0 1.1 1.7z" fill="#fff"/></svg>TikTok</a>

@@ -13,7 +13,7 @@ Página de directos (Kick), videos (YouTube) y reels (TikTok). Se despliega en V
 | `KICK_CLIENT_ID`, `KICK_CLIENT_SECRET` | estado "en vivo" de Kick |
 | `YOUTUBE_API_KEY` | videos y suscriptores de YouTube |
 | `TIKTOK_RSS_URL` | feed RSS de los reels de TikTok (RSS.app). Opcional: ya viene cargado `https://rss.app/feeds/Lwrs1ycz4yXl1cEv.xml` |
-| `TIKTOK_USER` | opcional, por defecto `dany_ush_oficial` |
+| `TIKTOK_USER` | opcional, por defecto `dany_ush_oficial` (tiene que ser el @ real de TikTok, y el mismo que `CONFIG.tiktok` en `app.js`) |
 
 Después de cambiar una variable hay que hacer **Redeploy**.
 
