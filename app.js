@@ -57,7 +57,7 @@ const CONFIG = {
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const kickUrl = `https://kick.com/${CONFIG.kick}`, ttUrl = `https://www.tiktok.com/@${CONFIG.tiktok}`;
-let enVivo = false;
+let enVivo = false, ttVivo = false, TT = { live: false };
 const DATA = { kick: [], youtube: [], tiktok: [] };
 let proxT = null;
 let slides = [], idx = 0, timer = null, pausa = false, KICK = { live: false };
@@ -133,10 +133,12 @@ visor.addEventListener("close", () => (marco.innerHTML = ""));
 visor.addEventListener("click", (e) => { if (e.target === visor) visor.close(); });
 $("#cerrar").addEventListener("click", () => visor.close());
 
-const abrirKick = () => abrir("kick", CONFIG.kick, `Directo de ${CONFIG.nombre}`);
+const abrirTikTokLive = () => window.open(`https://www.tiktok.com/@${CONFIG.tiktok}/live`, "_blank", "noopener");
+const abrirKick = () => (ttVivo && !KICK.live ? abrirTikTokLive() : abrir("kick", CONFIG.kick, `Directo de ${CONFIG.nombre}`));
 $("#btn-directo").addEventListener("click", abrirKick);
 $("#poster-kick").addEventListener("click", () => {
   const s = slides[idx];
+  if (s && s.tipo === "ttlive") return abrirTikTokLive();
   if (!s || s.tipo === "kick") return abrirKick();
   abrir(s.tipo, s.id, s.titulo, s.video, s.thumb);
 });
@@ -233,13 +235,19 @@ setInterval(pintarProximo, 30000);
 async function cargarKick() {
   let d = { live: false, vods: [] };
   try { d = await (await fetch("/api/kick")).json(); } catch (_) {}
-  enVivo = !!d.live; KICK = d;
+  KICK = d; enVivo = !!d.live || ttVivo;
   pintarProximo(); pintarLive();
   if (d.seguidores) { setSeg("kick", d.seguidores); }
   const vistos = new Set(), todos = [...(CONFIG.kickVods || []), ...(d.vods || [])];
   DATA.kick = todos.filter((v) => v.id && !vistos.has(v.id) && vistos.add(v.id)).map((v) => ({ ...v, tipo: "kickvod" }));
   fila($("#rail-kick"), DATA.kick.slice(0, 12), "med", "Próximamente");
   armarSlides();
+}
+
+async function cargarTikTokLive() {
+  try { TT = await (await fetch("/api/tiktok-live")).json(); } catch (_) { TT = { live: false }; }
+  ttVivo = !!TT.live; enVivo = !!KICK.live || ttVivo;
+  pintarProximo(); pintarLive(); armarSlides();
 }
 
 async function cargarYouTube() {
@@ -276,7 +284,7 @@ async function cargarTikTok() {
   });
 }
 
-pintarProximo(); cargarKick(); cargarYouTube(); cargarTikTok();
+pintarProximo(); cargarKick(); cargarTikTokLive(); cargarYouTube(); cargarTikTok();
 
 /* ---- calendario (.ics) ---- */
 $("#proximo").addEventListener("click", (e) => { if (e.target.id === "btn-cal" && proxT) descargarICS(proxT); });
@@ -341,8 +349,9 @@ function armarSlides() {
     titulo: KICK.live ? (KICK.titulo || "Directo en Kick") : "Directo en Kick: ahora offline",
     thumb: KICK.live ? KICK.thumb : CONFIG.bannerOffline
   };
+  const tl = ttVivo && !KICK.live ? [{ tipo: "ttlive", plat: "tiktok", vivo: true, id: CONFIG.tiktok, titulo: TT.titulo || "Directo en TikTok", thumb: CONFIG.bannerOffline }] : [];
   const listas = [
-    [k],
+    tl.length ? tl : [k],
     DATA.youtube.slice(0, 3).map((v) => ({ ...v, plat: "youtube" })),
     DATA.tiktok.slice(0, 3).map((v) => ({ ...v, plat: "tiktok" })),
     DATA.kick.slice(0, 2).map((v) => ({ ...v, plat: "kick" }))
@@ -372,7 +381,7 @@ function mostrar(i, anim) {
   p.classList.toggle("vertical", vert);
   p.classList.toggle("offline", s.tipo === "kick" && !s.vivo);
   b.className = "badge " + (s.vivo ? "live" : s.plat);
-  b.textContent = s.vivo ? `EN VIVO${KICK.viewers ? " · " + KICK.viewers : ""}` : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : "");
+  b.textContent = s.vivo ? `EN VIVO${s.tipo === "ttlive" ? " · TikTok" : ""}${(s.tipo === "ttlive" ? TT.viewers : KICK.viewers) ? " · " + (s.tipo === "ttlive" ? TT.viewers : KICK.viewers) : ""}` : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : "");
   $("#titulo-kick").textContent = s.titulo || "";
   document.querySelectorAll("#dots button").forEach((d, n) => d.setAttribute("aria-current", n === i));
   if (anim) { p.classList.remove("entra"); void p.offsetWidth; p.classList.add("entra"); }
@@ -394,7 +403,7 @@ const fmtN = (n) => new Intl.NumberFormat("es-AR", { notation: "compact", maximu
 function pintarLive() {
   $("#livebar").hidden = !enVivo;
   document.body.classList.toggle("live", enVivo);
-  if (enVivo) $("#livebar-t").textContent = KICK.titulo ? `· ${KICK.titulo}` : "";
+  if (enVivo) { const t = KICK.live ? KICK.titulo : TT.titulo; $("#livebar-t").textContent = (ttVivo && !KICK.live ? "· en TikTok " : "") + (t ? `· ${t}` : ""); }
   const pill = $("#live-pill");
   pill.classList.toggle("off", !enVivo); pill.disabled = !enVivo;
   $("#live-pill-t").textContent = enVivo ? "EN VIVO" : "OFFLINE";
@@ -406,8 +415,12 @@ $("#livebar-btn").addEventListener("click", abrirKick);
 setInterval(async () => {
   if (document.hidden) return; // pestaña en segundo plano: no gasta llamadas
   try {
-    const d = await (await fetch("/api/kick")).json();
-    if (!!d.live !== enVivo) { enVivo = !!d.live; KICK = d; pintarProximo(); pintarLive(); armarSlides(); }
+    const [d, t] = await Promise.all([
+      fetch("/api/kick").then((r) => r.json()).catch(() => KICK),
+      fetch("/api/tiktok-live").then((r) => r.json()).catch(() => TT),
+    ]);
+    const nuevo = !!d.live || !!t.live;
+    if (nuevo !== enVivo || !!t.live !== ttVivo || !!d.live !== !!KICK.live) { KICK = d; TT = t; ttVivo = !!t.live; enVivo = nuevo; pintarProximo(); pintarLive(); armarSlides(); }
   } catch (_) {}
 }, 60000);
 
