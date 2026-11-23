@@ -66,7 +66,7 @@ const ETQ = { kick: "Kick", youtube: "YouTube", tiktok: "TikTok" };
 document.title = `${CONFIG.nombre} | Directos, videos y reels`;
 $("#nombre").textContent = CONFIG.nombre;
 $("#tagline").textContent = CONFIG.tagline;
-$("#foot-name").textContent = `© ${new Date().getFullYear()} ${CONFIG.nombre}`;
+$("#foot-name").textContent = `© ${new Date().getFullYear()} ${CONFIG.nombre} - Todos los derechos reservados`;
 
 [
   ["#link-kick2", kickUrl], ["#btn-kick", kickUrl], ["#f-kick", kickUrl],
@@ -635,3 +635,17 @@ document.querySelector(".top .logo").addEventListener("click", (e) => {
   scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   history.replaceState(null, "", location.pathname + location.search);
 });
+
+/* ---- Contacto del pie: en compu copia el mail (mailto: abre una pestaña vacía si no hay programa de correo); en el celu abre el correo ---- */
+(() => {
+  const a = $("#foot-mail"); if (!a) return;
+  const mail = a.href.replace(/^mailto:/i, "").split("?")[0];
+  a.addEventListener("click", async (e) => {
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) return; // celular: abre la app de correo
+    e.preventDefault();
+    let ok = false; try { await navigator.clipboard.writeText(mail); ok = true; } catch (_) {}
+    let t = $("#toast"); if (!t) { t = document.createElement("div"); t.id = "toast"; t.setAttribute("role", "status"); document.body.append(t); }
+    t.textContent = ok ? `Mail copiado: ${mail}` : `Mail de contacto: ${mail}`;
+    t.classList.add("ver"); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove("ver"), 3000);
+  });
+})();
