@@ -13,7 +13,7 @@ const CONFIG = {
     { nombre: "Discord", url: "https://discord.gg/bghCDSQVdm" },
     { nombre: "WhatsApp", url: "" },
   ],
-  donar: { alias: "", cafecito: "", paypal: "" }, // alias de Mercado Pago, link de Cafecito, link de PayPal
+  donar: { mp: "", alias: "", paypal: "" }, // mp: link de cobro de Mercado Pago (https://link.mercadopago.com.ar/...), alias: alias o CVU para transferir, paypal: link de PayPal (https://paypal.me/TUUSUARIO)
   kick: "danyush", // kick.com/USUARIO
   youtubeCanal: "https://www.youtube.com/@dany-ush6495",
   youtubeId: "UCG7poDcbGtKNc4hAQWBvqpA", // link del canal
@@ -293,13 +293,17 @@ if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colabo
   const D = CONFIG.donar, al = $("#donar-alias");
   $("#cap-donar").hidden = false;
   const pronto = () => { al.hidden = false; al.textContent = "Este medio de apoyo va a estar disponible muy pronto."; };
+  const abrirLink = (url) => window.open(url, "_blank", "noopener");
+  // Mercado Pago: abre el link de cobro y, si hay alias, lo copia y lo muestra por si preferís transferir
   $("#btn-mp").addEventListener("click", async () => {
-    if (!D.alias) return pronto();
-    let ok = false; try { await navigator.clipboard.writeText(D.alias); ok = true; } catch (_) {}
-    al.hidden = false; al.innerHTML = "Alias: <b></b>" + (ok ? " · ¡copiado!" : ""); al.querySelector("b").textContent = D.alias;
+    if (!D.mp && !D.alias) return pronto();
+    if (D.alias) {
+      let ok = false; try { await navigator.clipboard.writeText(D.alias); ok = true; } catch (_) {}
+      al.hidden = false; al.innerHTML = "Alias: <b></b>" + (ok ? " · ¡copiado!" : ""); al.querySelector("b").textContent = D.alias;
+    }
+    if (D.mp) abrirLink(D.mp);
   });
-  [["#btn-cafecito", D.cafecito], ["#btn-paypal", D.paypal]].forEach(([sel, url]) =>
-    $(sel).addEventListener("click", () => (url ? window.open(url, "_blank", "noopener") : pronto())));
+  $("#btn-paypal").addEventListener("click", () => (D.paypal ? abrirLink(D.paypal) : pronto()));
 })();
 
 /* ---- Portada principal rotativa: Kick, YouTube, TikTok ---- */
