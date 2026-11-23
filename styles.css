@@ -493,3 +493,15 @@ a.btn-copiar{text-decoration:none;display:inline-block}
 .donar-b.off{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--line);color:var(--muted);cursor:not-allowed;filter:grayscale(1);opacity:.6}
 .donar-b.off:hover,.donar-b.off:focus-visible{transform:none;filter:grayscale(1)}
 .donar-b small{font-size:.72rem;font-weight:600;opacity:.85}
+
+.foot-contacto {
+  font-size: .88rem;
+  color: var(--muted);
+}
+.foot-contacto a {
+  text-decoration: none;
+  color: var(--violet-soft);
+}
+.foot-contacto a:hover {
+  text-decoration: underline;
+}
