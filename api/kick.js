@@ -33,6 +33,7 @@ export default async function handler(req, res) {
     out.vods = (Array.isArray(v) ? v : v.data || []).map((x) => ({
       id: x.video?.uuid || x.uuid, titulo: x.session_title || x.title || "Stream anterior", fecha: iso(x.start_time || x.created_at),
       thumb: x.thumbnail?.src || x.thumbnail, vistas: x.views ?? x.video?.views ?? null,
+      video: [x.source, x.video?.source].find((u) => typeof u === "string" && u.startsWith("http")) || "", // link directo del video (m3u8), si Kick lo entrega
     })).filter((x) => x.id);
   };
   const seguidores = async () => {

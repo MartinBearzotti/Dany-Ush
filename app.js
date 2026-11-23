@@ -103,24 +103,24 @@ $("#copiar-link").addEventListener("click", async () => {
   } catch (_) {}
 });
 
-// reproduce el video directo de un clip de Kick (mp4, o m3u8 con hls.js si el navegador no lo lee solo)
+// reproduce el video directo de un clip o stream anterior de Kick (mp4, o m3u8 con hls.js si el navegador no lo lee solo)
 function ponerVideo(v, url) {
   const enKick = () => { marco.innerHTML = `<a class="btn primary" href="${esc(linkActual)}" target="_blank" rel="noopener" style="margin:24px">Ver este clip en Kick</a>`; };
   v.addEventListener("error", enKick);
   if (!/\.m3u8(\?|$)/i.test(url) || v.canPlayType("application/vnd.apple.mpegurl")) { v.src = url; return; }
   const s = document.createElement("script");
   s.src = "https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js";
-  s.onload = () => { if (window.Hls && Hls.isSupported()) { const h = new Hls(); h.loadSource(url); h.attachMedia(v); } else v.src = url; };
+  s.onload = () => { if (window.Hls && Hls.isSupported()) { const h = new Hls(); h.loadSource(url); h.attachMedia(v); h.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) enKick(); }); } else v.src = url; };
   s.onerror = enKick;
   document.head.append(s);
 }
 
 function abrir(tipo, id, titulo, video) {
   linkActual = LINKS[tipo] ? LINKS[tipo](id) : kickUrl;
-  if ((tipo === "kickclip" && !video) || tipo === "kickvod") { window.open(linkActual, "_blank", "noopener"); return; } // Kick no permite incrustar streams anteriores ni clips: se ven en Kick
+  if ((tipo === "kickclip" || tipo === "kickvod") && !video) { window.open(linkActual, "_blank", "noopener"); return; } // sin video directo, Kick no se puede incrustar: se ve en Kick
   // botón de salida: si el reproductor incrustado falla (por ejemplo con bloqueador de anuncios), se abre en la red original
   const fuera = $("#abrir-fuera"); fuera.href = linkActual; fuera.textContent = `Ver en ${tipo === "youtube" ? "YouTube" : tipo === "tiktok" ? "TikTok" : "Kick"}`;
-  if (tipo === "kickclip") { // clip con video directo: se ve en la misma página
+  if (tipo === "kickclip" || tipo === "kickvod") { // clip o stream anterior con video directo: se ve en la misma página
     marco.className = "marco v16";
     marco.innerHTML = "<video controls autoplay playsinline></video>";
     ponerVideo(marco.querySelector("video"), video);
