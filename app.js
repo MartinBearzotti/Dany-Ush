@@ -4,7 +4,7 @@ const CONFIG = {
   nombre: "DANY-USH",
   logo: "/logo-v2.png",
   tagline: "Directos, videos y reels en un solo lugar.",
-  bio: "Gaming divertido: Valorant, F1, Among Us y mucho más. El fin es divertirse y pasar un buen rato.",
+  bio: "Gaming, diversión y buena onda. Jugamos Valorant, F1, Among Us, probamos juegos nuevos, demos y vivimos aventuras con la comunidad. También hay charlas, momentos random y muchas risas. El objetivo es simple: divertirnos, compartir y pasar un buen rato.",
   email: "", // mail para marcas y colaboraciones
   redes: [ // los que tengan url se muestran
     { nombre: "Instagram", url: "" },
