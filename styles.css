@@ -266,16 +266,16 @@ body.live .row{scroll-margin-top:124px}
 .seg-panel .row-head h2{font-size:clamp(1.3rem,3vw,1.9rem)}
 .seg-panel .seg-total{background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(135deg,var(--violet),var(--magenta),var(--cyan)) border-box;box-shadow:0 0 70px -24px var(--magenta)}
 .seg-panel .seg .n{font-size:clamp(1.8rem,3.4vw,2.4rem)}
-.donar-btns{display:flex;gap:12px;margin-top:14px}
-.donar-b{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;font:inherit;color:#fff;padding:14px 8px;border-radius:16px;border:1px solid rgba(255,255,255,.14);transition:transform .2s,box-shadow .2s,filter .2s}
-.donar-b.mp{background:#009ee3;box-shadow:0 10px 24px -12px #009ee3}
-.donar-b.pp{background:#003087;box-shadow:0 10px 24px -12px #0070ba}
+.donar-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;width:100%;align-self:stretch}
+.donar-b{flex:1 1 auto;display:inline-flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;cursor:pointer;font:inherit;color:#fff;padding:6px 18px 6px 6px;border-radius:999px;border:0;white-space:nowrap;transition:transform .2s,box-shadow .2s,filter .2s}
+.donar-b.mp{background:#009ee3;box-shadow:0 8px 22px -10px #009ee3}
+.donar-b.pp{background:#003087;box-shadow:0 8px 22px -10px #0070ba}
 .donar-b:hover,.donar-b:focus-visible{transform:translateY(-2px);filter:brightness(1.1);outline:0}
 .donar-b:active{transform:translateY(0) scale(.98)}
-.d-ico{width:44px;height:44px;border-radius:12px;overflow:hidden;display:grid;place-items:center;background:#fff}
+.d-ico{flex:none;width:34px;height:34px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#fff}
 .d-ico img{width:100%;height:100%;object-fit:cover;display:block}
-.donar-b.pp .d-ico img{width:76%;height:76%;object-fit:contain}
-.donar-b b{font-size:.88rem;font-weight:800;white-space:nowrap}
+.donar-b.pp .d-ico img{width:74%;height:74%;object-fit:contain}
+.donar-b b{font-size:.9rem;font-weight:800}
 #toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:100;background:#1a0f33;color:#fff;border:1px solid #5b3fa0;padding:10px 18px;border-radius:12px;font-size:.9rem;transition:opacity .25s,transform .25s}
 #toast.ver{opacity:1;transform:translate(-50%,0)}
 @media(prefers-reduced-motion:reduce){.donar-b,#toast{transition:none}}
