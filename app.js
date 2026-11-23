@@ -418,8 +418,8 @@ function pintarLive() {
 $("#live-pill").addEventListener("click", abrirKick);
 $("#livebar-btn").addEventListener("click", abrirKick);
 
-// revisa cada 20 segundos si empezó o terminó el directo
-setInterval(async () => {
+// revisa cada 10 segundos (y apenas volvés a la pestaña) si empezó o terminó el directo
+async function revisarEnVivo() {
   if (document.hidden) return; // pestaña en segundo plano: no gasta llamadas
   try {
     const [d, t] = await Promise.all([
@@ -429,7 +429,10 @@ setInterval(async () => {
     const nuevo = !!d.live || !!t.live;
     if (nuevo !== enVivo || !!t.live !== ttVivo || !!d.live !== !!KICK.live) { KICK = d; TT = t; ttVivo = !!t.live; enVivo = nuevo; pintarProximo(); pintarLive(); armarSlides(); }
   } catch (_) {}
-}, 20000);
+}
+setInterval(revisarEnVivo, 10000);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) revisarEnVivo(); });
+window.addEventListener("focus", revisarEnVivo);
 
 /* ---- Clips destacados ---- */
 const CLIPS = CONFIG.clips.map((c) => ({ ...c, thumb: c.thumb || (c.tipo === "youtube" ? `https://i.ytimg.com/vi/${c.id}/hqdefault.jpg` : "") }));

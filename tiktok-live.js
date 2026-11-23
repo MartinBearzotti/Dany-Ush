@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const debug = new URL(req.url, "http://x").searchParams.has("debug");
   const out = { live: false };
   const dbg = {};
-  res.setHeader("Cache-Control", debug ? "no-store" : "s-maxage=30, stale-while-revalidate=60");
+  res.setHeader("Cache-Control", debug ? "no-store" : "s-maxage=5");
 
   if (process.env.TIKTOK_LIVE_FORCE === "1") { out.live = true; dbg.forzado = true; }
   else {
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         const roomId = ui?.user?.roomId || live?.roomId || live?.liveRoomUserInfo?.user?.roomId;
         dbg.status_live = status; dbg.roomId = roomId || null;
         // status 2 = en vivo; 4 = terminó
-        if (status === 2 || (roomId && roomId !== "0" && status !== 4)) {
+        if (status === 2) { // solo status 2 = en vivo (un roomId viejo no alcanza: queda guardado después del directo)
           out.live = true;
           out.titulo = live?.title || live?.liveRoomUserInfo?.liveRoom?.title || "";
           out.viewers = live?.liveRoomStats?.userCount ?? live?.liveRoomUserInfo?.liveRoom?.liveRoomStats?.userCount ?? null;

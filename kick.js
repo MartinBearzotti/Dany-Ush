@@ -11,8 +11,10 @@ export default async function handler(req, res) {
   const { KICK_CLIENT_ID: id, KICK_CLIENT_SECRET: secret } = process.env;
   const slug = process.env.KICK_SLUG && !/^CAMBIAR/i.test(process.env.KICK_SLUG) ? process.env.KICK_SLUG : "danyush";
   const soloLive = new URL(req.url, "http://x").searchParams.has("live"); // ?live=1: respuesta rápida, solo el estado
-  res.setHeader("Cache-Control", soloLive ? "s-maxage=10, stale-while-revalidate=20" : "s-maxage=30, stale-while-revalidate=60");
+  res.setHeader("Cache-Control", soloLive ? "s-maxage=5" : "s-maxage=30, stale-while-revalidate=60");
   const out = { live: false, vods: [] };
+  const debug = new URL(req.url, "http://x").searchParams.has("debug"); // /api/kick?live=1&debug=1 muestra lo que dice Kick en crudo
+  if (debug) res.setHeader("Cache-Control", "no-store");
 
   // las tres consultas corren a la vez (antes eran una atrás de otra y podían colgar la función)
   const enVivo = async () => {
@@ -25,6 +27,7 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${t.access_token}` }, signal: AbortSignal.timeout(4000),
     })).json();
     const ch = c.data?.[0];
+    if (debug) out.debug = { slug, id: !!id, secret: !!secret, token: !!t.access_token, stream: ch?.stream || null, error: t.error || c.message || null };
     if (ch?.stream?.is_live) Object.assign(out, { live: true, viewers: ch.stream.viewer_count, titulo: ch.stream_title, thumb: ch.stream.thumbnail });
   };
   const vods = async () => { // endpoint no oficial: Kick puede bloquearlo (Cloudflare)
