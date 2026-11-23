@@ -71,7 +71,7 @@ h1{white-space:nowrap;font-family:var(--display);font-weight:800;font-size:clamp
 @keyframes pulso{50%{opacity:.2;transform:scale(.7)}}
 .poster .fecha{position:absolute;z-index:2;top:14px;right:14px;font-size:.74rem;font-weight:700;padding:3px 9px;border-radius:8px;background:rgba(11,4,21,.8)}
 .plat{position:absolute;z-index:3;top:14px;left:14px;font-weight:800;font-size:.74rem;padding:4px 10px;border-radius:8px;background:var(--surface)}
-.plat.kick{background:#53fc18;color:#0b0415}.plat.youtube{background:#ff2d2d;color:#fff}.plat.tiktok{background:#fff;color:#0b0415}
+.plat.kick{background:#53fc18;color:#0b0415}.plat.youtube{background:#ff2d2d;color:#fff}.plat.tiktok{background:#000;color:#fff;box-shadow:-2px -2px 0 #25f4ee,2px 2px 0 #fe2c55}
 .poster.ghost{cursor:default;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
 .poster.ghost:hover{transform:none;box-shadow:inset 0 0 0 1px var(--line)}
 .poster.ghost::after,.poster.ghost .play{display:none}
@@ -151,18 +151,18 @@ dialog[open]{animation:abrir .3s cubic-bezier(.2,.8,.2,1)}
 .dots button[aria-current="true"]{width:32px;background:linear-gradient(90deg,var(--violet),var(--magenta))}
 .hero-poster.entra{animation:entrada .65s cubic-bezier(.2,.8,.2,1)}
 @keyframes entrada{from{opacity:.3;transform:scale(1.035)}}
-.badge.kick{background:#53fc18;color:#0b0415}.badge.youtube{background:#ff2d2d;color:#fff}.badge.tiktok{background:#fff;color:#0b0415}
+.badge.kick{background:#53fc18;color:#0b0415}.badge.youtube{background:#ff2d2d;color:#fff}.badge.tiktok{background:#000;color:#fff;box-shadow:-2px -2px 0 #25f4ee,2px 2px 0 #fe2c55}
 
 /* ===== de YouTube para abajo: paneles y cápsulas ===== */
 [hidden]{display:none!important}
 .row-head h2{display:flex;align-items:center;gap:12px}
 .row-head h2::before{content:"";width:10px;height:28px;border-radius:99px;background:linear-gradient(var(--violet),var(--magenta))}
-.panel.yt h2::before{background:#ff2d2d}.panel.tt h2::before{background:linear-gradient(var(--cyan),var(--magenta))}
+.panel.yt h2::before{background:#ff2d2d}.panel.tt h2::before{background:linear-gradient(#25f4ee,#fe2c55)}
 .row-head>a{padding:9px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--text);text-decoration:none;font-weight:700;font-size:.9rem;transition:.2s}
 .row-head>a:hover{border-color:var(--violet);background:var(--surface2);text-decoration:none}
 .panel{--c:var(--violet);padding:clamp(18px,3vw,32px);border-radius:36px;border:1px solid var(--line);
   background:linear-gradient(180deg,rgba(29,15,56,.75),rgba(21,10,40,.55));box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 50px 90px -60px var(--c)}
-.panel.yt{--c:#ff2d2d}.panel.tt{--c:var(--cyan)}
+.panel.yt{--c:#ff2d2d}.panel.tt{--c:#fe2c55}
 
 .cap{position:relative;padding:26px;border-radius:30px;border:1px solid transparent;
   background:linear-gradient(var(--surface),var(--surface)) padding-box,linear-gradient(135deg,rgba(139,92,246,.7),rgba(217,70,239,.25)) border-box}
