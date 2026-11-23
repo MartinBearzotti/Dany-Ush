@@ -19,11 +19,7 @@ const CONFIG = {
   youtubeId: "UCG7poDcbGtKNc4hAQWBvqpA", // link del canal
   tiktok: "dany_ush_oficial",
   // Horario fijo de directos (hora Argentina). dia: 0=domingo ... 6=sábado
-  horario: [
-    { dia: 2, hora: "21:00" },
-    { dia: 4, hora: "21:00" },
-    { dia: 6, hora: "22:00" },
-  ],
+  horario:[],
   bannerOffline: "/og-v2.png", // imagen fija cuando Kick está offline
   // Streams anteriores de Kick a mano (se suman a los automáticos). id = el código largo del video: kick.com/USUARIO/videos/ESTE-CODIGO
   kickVods: [
