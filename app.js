@@ -210,10 +210,19 @@ function proximoDirecto() {
 
 function pintarProximo() {
   const el = $("#proximo");
-  if (enVivo) { el.className = "proximo en-vivo"; el.innerHTML = 'Está en vivo ahora, ven y sumate al directo<small>Tocá "Ver el directo"</small>'; return; }
-  el.className = "proximo"; el.hidden = false;
+  if (enVivo) {
+    el.hidden = false;
+    el.className = "proximo en-vivo";
+    el.innerHTML = 'Está en vivo ahora, ven y sumate al directo<small>Tocá "Ver el directo"</small>';
+    return;
+  }
+  el.className = "proximo";
+  el.hidden = false;
   const t = proximoDirecto();
-  if (!t) { el.hidden = true; return; }
+  if (!t) {
+    el.innerHTML = 'Directos sin horario fijo<small>Activá la campanita en Kick o sumate al Discord para enterarte cuando prende</small>';
+    return;
+  }
   const m = Math.max(0, Math.floor((t - Date.now()) / 60000));
   const cuenta = m >= 1440 ? `en ${Math.floor(m / 1440)} d ${Math.floor((m % 1440) / 60)} h` : m >= 60 ? `en ${Math.floor(m / 60)} h ${m % 60} min` : `en ${m} min`;
   const dia = new Date(t - 3 * 3600e3).toLocaleDateString("es-AR", { weekday: "long", timeZone: "UTC" }).replace(/^./, (c) => c.toUpperCase());
@@ -221,6 +230,7 @@ function pintarProximo() {
   proxT = t;
   el.innerHTML = `Próximo directo: ${dia} ${hora} hs<small>${cuenta} (hora Argentina)</small><button class="mini" id="btn-cal" type="button">Agregar a mi calendario</button>`;
 }
+
 setInterval(pintarProximo, 30000);
 
 /* ---- datos automáticos ---- */
