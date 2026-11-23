@@ -488,3 +488,8 @@ a.btn-copiar{text-decoration:none;display:inline-block}
 .panel.dc{--c:#5865f2;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 50px 90px -60px #5865f2}
 .panel.dc h2::before{background:linear-gradient(#5865f2,#7c3aed)}
 .panel.dc .cap-discord{margin-top:4px}
+
+/* PayPal apagado hasta tener el link: se ve gris y no se puede tocar */
+.donar-b.off{background:var(--surface2);box-shadow:inset 0 0 0 1px var(--line);color:var(--muted);cursor:not-allowed;filter:grayscale(1);opacity:.6}
+.donar-b.off:hover,.donar-b.off:focus-visible{transform:none;filter:grayscale(1)}
+.donar-b small{font-size:.72rem;font-weight:600;opacity:.85}

@@ -13,7 +13,7 @@ const CONFIG = {
     { nombre: "Discord", url: "https://discord.gg/bghCDSQVdm" },
     { nombre: "WhatsApp", url: "" },
   ],
-  donar: { mp: "", alias: "", paypal: "" }, // mp: link de cobro de Mercado Pago (https://link.mercadopago.com.ar/...), alias: alias o CVU para transferir, paypal: link de PayPal (https://paypal.me/TUUSUARIO)
+  donar: { mp: "", alias: "dany.ush.mp", paypal: "" }, // mp: link de cobro de Mercado Pago (https://link.mercadopago.com.ar/...), alias: alias o CVU para transferir, paypal: link de PayPal (https://paypal.me/TUUSUARIO)
   kick: "danyush", // kick.com/USUARIO
   youtubeCanal: "https://www.youtube.com/@dany-ush6495",
   youtubeId: "UCG7poDcbGtKNc4hAQWBvqpA", // link del canal
