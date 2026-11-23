@@ -105,7 +105,7 @@ $("#copiar-link").addEventListener("click", async () => {
 
 // reproduce el video directo de un clip o stream anterior de Kick (mp4, o m3u8 con hls.js si el navegador no lo lee solo)
 function ponerVideo(v, url) {
-  const enKick = () => { marco.innerHTML = `<a class="btn primary" href="${esc(linkActual)}" target="_blank" rel="noopener" style="margin:24px">Ver este clip en Kick</a>`; };
+  const enKick = () => { marco.innerHTML = `<a class="btn primary" href="${esc(linkActual)}" target="_blank" rel="noopener" style="margin:24px">Ver en Kick</a>`; };
   v.addEventListener("error", enKick);
   if (!/\.m3u8(\?|$)/i.test(url) || v.canPlayType("application/vnd.apple.mpegurl")) { v.src = url; return; }
   const s = document.createElement("script");
