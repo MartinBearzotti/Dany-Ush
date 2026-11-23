@@ -388,7 +388,7 @@ function mostrar(i, anim) {
   p.classList.toggle("vertical", vert);
   p.classList.toggle("offline", s.tipo === "kick" && !s.vivo);
   b.className = "badge " + (s.vivo ? "live" : s.plat);
-  { const v = s.tipo === "ttlive" ? TT.viewers : KICK.viewers; b.textContent = s.vivo ? (v != null ? String(v) : "EN VIVO") : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : ""); b.title = s.vivo && v != null ? `En vivo · ${v} espectadores` : ""; }
+  { const v = s.tipo === "ttlive" ? TT.viewers : KICK.viewers; b.textContent = s.vivo ? (v != null ? `EN VIVO · ${v}` : "EN VIVO") : ETQ[s.plat] + (s.tipo === "kickvod" ? " · stream" : ""); b.title = s.vivo && v != null ? `En vivo · ${v} espectadores` : ""; }
   $("#titulo-kick").textContent = s.titulo || "";
   document.querySelectorAll("#dots button").forEach((d, n) => d.setAttribute("aria-current", n === i));
   if (anim) { p.classList.remove("entra"); void p.offsetWidth; p.classList.add("entra"); }
