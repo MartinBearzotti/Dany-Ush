@@ -290,20 +290,22 @@ if (dc) {
 if (CONFIG.email) { $("#btn-mail").href = `mailto:${CONFIG.email}?subject=Colaboración con ${CONFIG.nombre}`; $("#cap-mail").hidden = false; }
 
 (() => {
-  const D = CONFIG.donar, al = $("#donar-alias");
+  const D = CONFIG.donar;
   $("#cap-donar").hidden = false;
-  const pronto = () => { al.hidden = false; al.textContent = "Este medio de apoyo va a estar disponible muy pronto."; };
+  // aviso flotante: no empuja ni estira nada de la página
+  const aviso = (txt) => {
+    let t = $("#toast"); if (!t) { t = document.createElement("div"); t.id = "toast"; t.setAttribute("role", "status"); document.body.append(t); }
+    t.textContent = txt; t.classList.add("ver"); clearTimeout(aviso.t); aviso.t = setTimeout(() => t.classList.remove("ver"), 2600);
+  };
   const abrirLink = (url) => window.open(url, "_blank", "noopener");
-  // Mercado Pago: abre el link de cobro y, si hay alias, lo copia y lo muestra por si preferís transferir
   $("#btn-mp").addEventListener("click", async () => {
-    if (!D.mp && !D.alias) return pronto();
     if (D.alias) {
       let ok = false; try { await navigator.clipboard.writeText(D.alias); ok = true; } catch (_) {}
-      al.hidden = false; al.innerHTML = "Alias: <b></b>" + (ok ? " · ¡copiado!" : ""); al.querySelector("b").textContent = D.alias;
+      aviso(ok ? `Alias copiado: ${D.alias}` : `Alias: ${D.alias}`);
     }
     if (D.mp) abrirLink(D.mp);
   });
-  $("#btn-paypal").addEventListener("click", () => (D.paypal ? abrirLink(D.paypal) : pronto()));
+  $("#btn-paypal").addEventListener("click", () => { if (D.paypal) abrirLink(D.paypal); });
 })();
 
 /* ---- Portada principal rotativa: Kick, YouTube, TikTok ---- */
