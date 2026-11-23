@@ -505,3 +505,16 @@ a.btn-copiar{text-decoration:none;display:inline-block}
 .foot-contacto a:hover {
   text-decoration: underline;
 }
+.foot-creador {
+  font-size: .84rem;
+  color: var(--muted);
+}
+.foot-creador a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .2s;
+}
+.foot-creador a:hover,
+.foot-creador a:focus-visible {
+  color: var(--violet-soft);
+}
