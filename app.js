@@ -4,7 +4,7 @@ const CONFIG = {
   nombre: "DANY-USH",
   logo: "/logo-v2.png",
   tagline: "Directos, videos y reels en un solo lugar.",
-  bio: "Gaming, diversión y buena onda. Jugamos Valorant, F1, Among Us, probamos juegos nuevos, demos y vivimos aventuras con la comunidad. También hay charlas, momentos random y muchas risas. El objetivo es simple: divertirnos, compartir y pasar un buen rato.",
+  bio: "¡Hola! Soy Daniel Quiroga 👋 Bienvenidos a mi espacio de gaming, entretenimiento y buena onda. Acá jugamos Valorant, F1, Among Us y muchos juegos más. Descubrimos novedades, probamos demos, nos animamos a nuevas aventuras y compartimos charlas, momentos random y muchas risas con la comunidad. La idea es simple: disfrutar cada directo, divertirnos juntos y pasarla genial. ¡Siempre con buena onda y ganas de compartir! 🎮",
   email: "", // mail para marcas y colaboraciones
   redes: [ // los que tengan url se muestran
     { nombre: "Instagram", url: "" },
