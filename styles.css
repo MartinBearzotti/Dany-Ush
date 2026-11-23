@@ -483,3 +483,8 @@ a.btn-copiar{text-decoration:none;display:inline-block}
 .tj-img{z-index:-2;object-fit:cover}
 .marco.tarjeta::after{content:"";position:absolute;inset:0;z-index:-1;background:rgba(8,2,18,.45)}
 .tj-btn{font-size:1.05rem;padding:14px 28px;box-shadow:0 10px 40px -8px var(--violet)}
+
+/* ===== Discord: sección propia (arriba de "Sumate y apoyá") ===== */
+.panel.dc{--c:#5865f2;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 50px 90px -60px #5865f2}
+.panel.dc h2::before{background:linear-gradient(#5865f2,#7c3aed)}
+.panel.dc .cap-discord{margin-top:4px}

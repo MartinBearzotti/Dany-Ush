@@ -300,6 +300,7 @@ document.querySelectorAll(".av").forEach((i) => (i.src = document.querySelector(
 const dc = CONFIG.redes.find((r) => r.nombre === "Discord" && r.url);
 if (dc) {
   const c = $("#cap-discord"); c.href = dc.url; c.hidden = false;
+  $("#discord").hidden = false; $("#nav-discord").hidden = false; $("#link-discord").href = dc.url;
   // nombre, imagen y miembros del servidor (desde el invite; si falla, queda el texto por defecto)
   fetch(`https://discord.com/api/v10/invites/${dc.url.split("/").pop()}?with_counts=true`).then((r) => r.json()).then((d) => {
     const g = d.guild; if (!g) return;
@@ -509,7 +510,7 @@ function abrirDiscord(e) {
     if (!abrio) window.open(web, "_blank", "noopener");
   }, 1800);
 }
-document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
+document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #link-discord, #avisos-dc')
   .forEach((a) => a.addEventListener("click", abrirDiscord));
 
 /* ---- Menú "Seguime en…": Kick, YouTube, TikTok y las redes de CONFIG.redes, cada una con su logo ---- */
