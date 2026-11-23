@@ -434,39 +434,63 @@ if (CLIPS.length) { $("#clips").hidden = false; fila($("#rail-clips"), CLIPS, "m
 /* ---- Seguidores: cápsulas por plataforma + total ---- */
 const SEG = { kick: 0, youtube: 0, tiktok: 0, discord: 0 };
 const SEGLINK = { kick: kickUrl, youtube: CONFIG.youtubeCanal, tiktok: ttUrl, discord: dc ? dc.url : "" };
-let segPrev = 0;
+let segPrev = 0, segVisible = false;
 document.querySelectorAll(".seg").forEach((e) => { const u = SEGLINK[e.dataset.p]; if (u) e.href = u; else e.hidden = true; });
 
-function contar(el, desde, hasta) { // anima el número
+function contar(el, desde, hasta) { // anima el número sin pisarse si llegan dos datos seguidos
+  if (el._raf) cancelAnimationFrame(el._raf);
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) { el.textContent = hasta.toLocaleString("es-AR"); return; }
-  const t0 = performance.now(), dur = 1000;
-  const paso = (t) => { const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3); el.textContent = Math.round(desde + (hasta - desde) * e).toLocaleString("es-AR"); if (p < 1) requestAnimationFrame(paso); };
-  requestAnimationFrame(paso);
+  const t0 = performance.now(), dur = 1400; // duración en milisegundos (1.4 seg)
+  const paso = (t) => {
+    const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(desde + (hasta - desde) * e).toLocaleString("es-AR");
+    if (p < 1) el._raf = requestAnimationFrame(paso);
+  };
+  el._raf = requestAnimationFrame(paso);
 }
 
 function setSeg(p, n, sub) {
   n = Number(n); if (!n) return;
-  // el número de CONFIG.seguidores funciona como "piso": si la plataforma entrega uno menor (redondeado o viejo), no baja
   if ((CONFIG.seguidoresPiso || []).includes(p) && CONFIG.seguidores[p] > n) n = CONFIG.seguidores[p];
   const el = document.querySelector(`.seg[data-p="${p}"]`); if (!el) return;
-  contar(el.querySelector(".n"), SEG[p], n); SEG[p] = n;
   if (sub) { const s = el.querySelector(".seg-sub"); s.textContent = sub; s.hidden = false; }
+  const prev = SEG[p];
+  SEG[p] = n;
+  if (segVisible && prev !== n) contar(el.querySelector(".n"), prev, n);
   pintarTotal();
 }
 
 let segListo = false;
 setTimeout(() => { segListo = true; pintarTotal(); }, 8000);
 function pintarTotal() {
-  if (segListo) document.querySelectorAll(".seg").forEach((e) => { if (SEGLINK[e.dataset.p]) e.hidden = !SEG[e.dataset.p]; }); // sin dato: no se muestra "—"
+  if (segListo) document.querySelectorAll(".seg").forEach((e) => { if (SEGLINK[e.dataset.p]) e.hidden = !SEG[e.dataset.p]; });
   const visibles = Object.keys(SEG).filter((k) => SEGLINK[k]);
   const tot = visibles.reduce((x, k) => x + SEG[k], 0);
   $("#seg-total-box").hidden = !tot;
-  contar($("#seg-total"), segPrev, tot); segPrev = tot;
+  if (segVisible && segPrev !== tot) { contar($("#seg-total"), segPrev, tot); segPrev = tot; }
   $("#seg-nota").textContent = visibles.some((k) => !SEG[k]) ? "Suma de las plataformas con dato disponible" : "";
 }
-Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, n));
-fetch("/api/seguidores").then((r) => r.json()).then((d) => Object.entries(d).forEach(([p, n]) => setSeg(p, n))).catch(() => {}); // números rápidos de Kick, YouTube y TikTok
 
+// Dispara la animación de todos los contadores recién cuando el bloque entra en pantalla
+const segPanel = $(".seg-panel") || $("#seg-total-box");
+if (segPanel && "IntersectionObserver" in window) {
+  new IntersectionObserver((entries, obs) => {
+    if (!entries[0].isIntersecting) return;
+    segVisible = true;
+    obs.disconnect();
+    Object.entries(SEG).forEach(([p, n]) => {
+      if (!n) return;
+      const el = document.querySelector(`.seg[data-p="${p}"] .n`);
+      if (el) contar(el, 0, n);
+    });
+    pintarTotal();
+  }, { threshold: 0.25 }).observe(segPanel);
+} else {
+  segVisible = true;
+}
+
+Object.entries(CONFIG.seguidores).forEach(([p, n]) => setSeg(p, n));
+fetch("/api/seguidores").then((r) => r.json()).then((d) => Object.entries(d).forEach(([p, n]) => setSeg(p, n))).catch(() => {});
 /* ---- Discord: abre la app directo; si no la tiene, abre la web ---- */
 function abrirDiscord(e) {
   if (!dc) return;
