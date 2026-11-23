@@ -4,6 +4,9 @@ const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
 const HEAD = { Accept: "application/json", "User-Agent": UA, "Accept-Language": "es-AR,es;q=0.9", Referer: "https://kick.com/" };
 const get = (url, ms = 4000) => fetch(url, { headers: HEAD, signal: AbortSignal.timeout(ms) });
 
+// Kick manda la fecha como "2026-11-18 22:43:19" (UTC, sin zona): se pasa a ISO con Z para que Safari la lea y no se corra de día
+const iso = (f) => (f && /^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/.test(f) ? f.replace(" ", "T") + "Z" : f);
+
 export default async function handler(req, res) {
   const { KICK_CLIENT_ID: id, KICK_CLIENT_SECRET: secret } = process.env;
   const slug = process.env.KICK_SLUG && !/^CAMBIAR/i.test(process.env.KICK_SLUG) ? process.env.KICK_SLUG : "danyush";
@@ -28,7 +31,7 @@ export default async function handler(req, res) {
     if (!r.ok) return;
     const v = await r.json();
     out.vods = (Array.isArray(v) ? v : v.data || []).map((x) => ({
-      id: x.video?.uuid || x.uuid, titulo: x.session_title || x.title || "Stream anterior", fecha: x.start_time || x.created_at,
+      id: x.video?.uuid || x.uuid, titulo: x.session_title || x.title || "Stream anterior", fecha: iso(x.start_time || x.created_at),
       thumb: x.thumbnail?.src || x.thumbnail, vistas: x.views ?? x.video?.views ?? null,
     })).filter((x) => x.id);
   };
