@@ -210,7 +210,7 @@ function proximoDirecto() {
 
 function pintarProximo() {
   const el = $("#proximo");
-  if (enVivo) { el.className = "proximo en-vivo"; el.innerHTML = 'Está en vivo ahora<small>Tocá "Ver el directo"</small>'; return; }
+  if (enVivo) { el.className = "proximo en-vivo"; el.innerHTML = 'Está en vivo ahora, ven y sumate la directo<small>Tocá "Ver el directo"</small>'; return; }
   el.className = "proximo"; el.hidden = false;
   const t = proximoDirecto();
   if (!t) { el.hidden = true; return; }
