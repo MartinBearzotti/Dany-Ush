@@ -103,36 +103,33 @@ $("#copiar-link").addEventListener("click", async () => {
   } catch (_) {}
 });
 
-// reproduce el video directo de un clip o stream anterior de Kick (mp4, o m3u8 con hls.js si el navegador no lo lee solo)
-function ponerVideo(v, url) {
-  const enKick = () => { marco.innerHTML = `<a class="btn primary" href="${esc(linkActual)}" target="_blank" rel="noopener" style="margin:24px">Ver en Kick</a>`; };
-  v.addEventListener("error", enKick);
-  if (!/\.m3u8(\?|$)/i.test(url) || v.canPlayType("application/vnd.apple.mpegurl")) { v.src = url; return; }
-  const s = document.createElement("script");
-  s.src = "https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js";
-  s.onload = () => { if (window.Hls && Hls.isSupported()) { const h = new Hls(); h.loadSource(url); h.attachMedia(v); h.on(Hls.Events.ERROR, (_, d) => { if (d.fatal) enKick(); }); } else v.src = url; };
-  s.onerror = enKick;
-  document.head.append(s);
+// Kick y TikTok no se pueden reproducir dentro de la página: se muestra la portada con el título y un botón al medio para verlo en la app
+function tarjeta(tipo, thumb) {
+  const red = tipo === "tiktok" ? "TikTok" : "Kick";
+  marco.className = `marco tarjeta ${tipo === "tiktok" ? "vert" : "horiz"} ${tipo === "tiktok" ? "tt" : "kk"}`;
+  marco.innerHTML = `<div class="tj-fondo"></div><img class="tj-img" alt="" referrerpolicy="no-referrer" hidden><a class="btn primary tj-btn" href="${esc(linkActual)}" target="_blank" rel="noopener">Ver en ${red}</a>`;
+  const img = marco.querySelector(".tj-img"), fondo = marco.querySelector(".tj-fondo");
+  if (!thumb) return;
+  const ok = (u) => { img.src = u; img.hidden = false; fondo.style.backgroundImage = `url("${u}")`; };
+  const probar = (u, siFalla) => { const t = new Image(); t.referrerPolicy = "no-referrer"; t.onload = () => ok(u); t.onerror = siFalla; t.src = u; };
+  probar(thumb, () => { if (tipo === "tiktok") probar(`/api/tiktok-img?u=${encodeURIComponent(thumb)}`, () => {}); }); // si TikTok bloquea la imagen, se pide por /api/tiktok-img
 }
 
-function abrir(tipo, id, titulo, video) {
+function abrir(tipo, id, titulo, video, thumb) {
   linkActual = LINKS[tipo] ? LINKS[tipo](id) : kickUrl;
-  if ((tipo === "kickclip" || tipo === "kickvod") && !video) { window.open(linkActual, "_blank", "noopener"); return; } // sin video directo, Kick no se puede incrustar: se ve en Kick
-  // botón de salida: si el reproductor incrustado falla (por ejemplo con bloqueador de anuncios), se abre en la red original
   const fuera = $("#abrir-fuera"); fuera.href = linkActual; fuera.textContent = `Ver en ${tipo === "youtube" ? "YouTube" : tipo === "tiktok" ? "TikTok" : "Kick"}`;
-  if (tipo === "kickclip" || tipo === "kickvod") { // clip o stream anterior con video directo: se ve en la misma página
-    marco.className = "marco v16";
-    marco.innerHTML = "<video controls autoplay playsinline></video>";
-    ponerVideo(marco.querySelector("video"), video);
-    $("#visor-titulo").textContent = titulo;
+  $("#visor-titulo").textContent = titulo;
+  if (tipo === "kickclip" || tipo === "kickvod" || tipo === "tiktok") {
+    fuera.style.display = "none"; // el botón del medio ya hace eso
+    tarjeta(tipo, thumb);
     visor.showModal();
     return;
   }
+  fuera.style.display = ""; // botón de salida: si el reproductor incrustado falla (por ejemplo con bloqueador de anuncios), se abre en la red original
   const [src, ratio] = EMBEDS[tipo](id);
   const ifr = (s) => `<iframe src="${s}" title="${esc(titulo)}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   marco.className = tipo === "kick" ? "marco kickchat" : `marco ${ratio}`;
   marco.innerHTML = ifr(src) + (tipo === "kick" ? `<iframe class="chat" src="https://kick.com/popout/${id}/chat" title="Chat de Kick"></iframe>` : "");
-  $("#visor-titulo").textContent = titulo;
   visor.showModal();
 }
 
@@ -145,7 +142,7 @@ $("#btn-directo").addEventListener("click", abrirKick);
 $("#poster-kick").addEventListener("click", () => {
   const s = slides[idx];
   if (!s || s.tipo === "kick") return abrirKick();
-  abrir(s.tipo, s.id, s.titulo);
+  abrir(s.tipo, s.id, s.titulo, s.video, s.thumb);
 });
 
 /* ---- portadas ---- */
@@ -176,7 +173,7 @@ function poster({ tipo, id, titulo, thumb, fecha, vistas, video }, clase) {
   } else if (tipo === "tiktok") b.classList.add("sin-thumb");
   b.innerHTML = `<span class="play"></span><span class="poster-title"></span>${chipTxt(fecha, vistas)}`;
   b.querySelector(".poster-title").textContent = titulo;
-  b.addEventListener("click", () => abrir(tipo, id, titulo, video));
+  b.addEventListener("click", () => abrir(tipo, id, titulo, video, thumb));
   return b;
 }
 
