@@ -213,11 +213,7 @@ async function cargarKick() {
   if (d.seguidores) { setSeg("kick", d.seguidores); }
   const vistos = new Set(), todos = [...(CONFIG.kickVods || []), ...(d.vods || [])];
   DATA.kick = todos.filter((v) => v.id && !vistos.has(v.id) && vistos.add(v.id)).map((v) => ({ ...v, tipo: "kickvod" }));
-  const rk = $("#rail-kick");
-  rk.innerHTML = "";
-  if (DATA.kick.length) fila(rk, DATA.kick.slice(0, 12), "med", "");
-  // acceso directo a todos los streams (la API de Kick no siempre los entrega)
-  rk.insertAdjacentHTML("beforeend", `<a class="kick-cta" href="${kickUrl}/videos" target="_blank" rel="noopener"><div><b>${DATA.kick.length ? "Ver más streams en Kick" : "Mirá los streams anteriores en Kick"}</b><span>Todos los directos del canal, completos.</span></div><em>Ver streams</em></a>`);
+  fila($("#rail-kick"), DATA.kick.slice(0, 12), "med", "Próximamente");
   armarSlides();
 }
 
@@ -550,4 +546,3 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   }
   fila($("#rail-clips"), [...CLIPS, ...auto].slice(0, 12), "med", "");
 })();
-
