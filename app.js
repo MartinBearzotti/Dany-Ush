@@ -103,9 +103,31 @@ $("#copiar-link").addEventListener("click", async () => {
   } catch (_) {}
 });
 
-function abrir(tipo, id, titulo) {
+// reproduce el video directo de un clip de Kick (mp4, o m3u8 con hls.js si el navegador no lo lee solo)
+function ponerVideo(v, url) {
+  const enKick = () => { marco.innerHTML = `<a class="btn primary" href="${esc(linkActual)}" target="_blank" rel="noopener" style="margin:24px">Ver este clip en Kick</a>`; };
+  v.addEventListener("error", enKick);
+  if (!/\.m3u8(\?|$)/i.test(url) || v.canPlayType("application/vnd.apple.mpegurl")) { v.src = url; return; }
+  const s = document.createElement("script");
+  s.src = "https://cdn.jsdelivr.net/npm/hls.js@1.5.17/dist/hls.min.js";
+  s.onload = () => { if (window.Hls && Hls.isSupported()) { const h = new Hls(); h.loadSource(url); h.attachMedia(v); } else v.src = url; };
+  s.onerror = enKick;
+  document.head.append(s);
+}
+
+function abrir(tipo, id, titulo, video) {
   linkActual = LINKS[tipo] ? LINKS[tipo](id) : kickUrl;
-  if (tipo === "kickclip") { window.open(linkActual, "_blank", "noopener"); return; } // los clips de Kick se ven en Kick
+  if ((tipo === "kickclip" && !video) || tipo === "kickvod") { window.open(linkActual, "_blank", "noopener"); return; } // Kick no permite incrustar streams anteriores ni clips: se ven en Kick
+  // botón de salida: si el reproductor incrustado falla (por ejemplo con bloqueador de anuncios), se abre en la red original
+  const fuera = $("#abrir-fuera"); fuera.href = linkActual; fuera.textContent = `Ver en ${tipo === "youtube" ? "YouTube" : tipo === "tiktok" ? "TikTok" : "Kick"}`;
+  if (tipo === "kickclip") { // clip con video directo: se ve en la misma página
+    marco.className = "marco v16";
+    marco.innerHTML = "<video controls autoplay playsinline></video>";
+    ponerVideo(marco.querySelector("video"), video);
+    $("#visor-titulo").textContent = titulo;
+    visor.showModal();
+    return;
+  }
   const [src, ratio] = EMBEDS[tipo](id);
   const ifr = (s) => `<iframe src="${s}" title="${esc(titulo)}" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
   marco.className = tipo === "kick" ? "marco kickchat" : `marco ${ratio}`;
@@ -135,7 +157,7 @@ function chipTxt(fecha, vistas) { // "18 nov · 3,4 mil vistas" (o solo la fecha
   return t ? `<span class="fecha">${t}</span>` : "";
 }
 
-function poster({ tipo, id, titulo, thumb, fecha, vistas }, clase) {
+function poster({ tipo, id, titulo, thumb, fecha, vistas, video }, clase) {
   const b = document.createElement("button");
   b.type = "button"; b.className = `poster ${clase}`;
   b.setAttribute("aria-label", `Reproducir: ${titulo}`);
@@ -154,7 +176,7 @@ function poster({ tipo, id, titulo, thumb, fecha, vistas }, clase) {
   } else if (tipo === "tiktok") b.classList.add("sin-thumb");
   b.innerHTML = `<span class="play"></span><span class="poster-title"></span>${chipTxt(fecha, vistas)}`;
   b.querySelector(".poster-title").textContent = titulo;
-  b.addEventListener("click", () => abrir(tipo, id, titulo));
+  b.addEventListener("click", () => abrir(tipo, id, titulo, video));
   return b;
 }
 
@@ -554,3 +576,10 @@ document.querySelectorAll('.seg[data-p="discord"], #cap-discord, #avisos-dc')
   }
   fila($("#rail-clips"), [...CLIPS, ...auto].slice(0, 12), "med", "");
 })();
+
+/* ---- logo de arriba: sube al inicio sin dejar el "#" en la dirección ---- */
+document.querySelector(".top .logo").addEventListener("click", (e) => {
+  e.preventDefault();
+  scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  history.replaceState(null, "", location.pathname + location.search);
+});

@@ -17,6 +17,7 @@ function normalizar(x) {
     thumb: typeof thumb === "string" ? thumb : "",
     vistas: x.view_count ?? x.views ?? x.viewCount ?? null,
     duracion: x.duration ?? null,
+    video: [x.video_url, x.clip_url, x.media_url].find((u) => typeof u === "string" && u.startsWith("http")) || "", // link directo al video (si Kick lo entrega)
   };
 }
 
