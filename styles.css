@@ -269,11 +269,11 @@ body.live .row{scroll-margin-top:124px}
 .donar-btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
 .donar-alias{margin-top:10px;color:var(--text)!important}
 .donar-alias b{color:var(--violet-soft);user-select:all}
-.donar-b{display:inline-flex;align-items:center;gap:10px;color:#fff;border:0;padding:12px 22px 12px 16px}
-.donar-b svg{width:24px;height:24px;flex:none}
-.donar-b.mp{background:linear-gradient(135deg,#009ee3,#0077c8);box-shadow:0 10px 30px -12px #009ee3}
-.donar-b.cafe{background:linear-gradient(135deg,#ff9f43,#e8590c);box-shadow:0 10px 30px -12px #ff9f43}
-.donar-b.pp{background:linear-gradient(135deg,#0070ba,#003087);box-shadow:0 10px 30px -12px #0070ba}
+.donar-b{display:inline-flex;align-items:center;gap:12px;cursor:pointer;font:inherit;font-weight:800;color:#1a1a2e;background:#fff;border:0;border-radius:16px;padding:8px 22px 8px 10px;transition:transform .2s,box-shadow .2s}
+.donar-b img{width:48px;height:48px;object-fit:contain;flex:none;border-radius:50%}
+.donar-b.pp img{border-radius:10px}
+.donar-b.mp{box-shadow:0 10px 30px -12px #009ee3}
+.donar-b.pp{box-shadow:0 10px 30px -12px #0070ba}
 .donar-b:hover{transform:translateY(-3px)}
 .hero-actions{position:relative;z-index:20}
 .seguime-item{display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border-radius:16px;color:var(--text);text-decoration:none;font-weight:700;transition:background .15s,transform .15s}
