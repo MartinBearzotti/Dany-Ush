@@ -536,3 +536,198 @@ a.btn-copiar{text-decoration:none;display:inline-block}
   footer{flex-direction:column;align-items:center;text-align:center}
   .foot-marca{align-items:center}
 }
+
+/* ===== AJUSTES RESPONSIVE PARA TELÉFONO ===== */
+.live-pill {
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  /* 1. Barra superior sin amontonamientos ni cortes */
+  body.live .live-pill {
+    display: none;
+  }
+
+  .top {
+    gap: 8px;
+    padding: 10px 14px;
+  }
+
+  .logo img {
+    height: 36px;
+    width: 36px;
+  }
+
+  nav {
+    gap: 2px;
+    -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+    mask-image: linear-gradient(90deg, #000 88%, transparent);
+    padding-right: 14px;
+  }
+
+  nav a {
+    padding: 7px 9px;
+    font-size: .82rem;
+    gap: 6px;
+  }
+
+  nav a svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  /* 2. Hero más compacto */
+  .hero {
+    gap: 20px;
+    padding: 16px 0 24px;
+  }
+
+  .hero-id .hero-logo {
+    width: 58px;
+    height: 58px;
+  }
+
+  .hero-id #nombre {
+    font-size: clamp(1.55rem, 7.5vw, 2.2rem);
+  }
+
+  #tagline {
+    font-size: 1rem;
+    margin: 4px 0 14px;
+  }
+
+  .rotador {
+    font-size: 1rem;
+    margin: -6px 0 16px;
+    min-height: 2.8em;
+  }
+
+  .proximo {
+    padding: 12px 16px;
+    font-size: .92rem;
+    margin-bottom: 16px;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .hero-actions .btn {
+    text-align: center;
+    padding: 12px 14px;
+    font-size: .92rem;
+  }
+
+  /* 3. Paneles y tarjetas de canal compactas */
+  .panel {
+    padding: 16px 14px;
+    border-radius: 24px;
+  }
+
+  .row {
+    margin-top: 28px;
+  }
+
+  .cap-side {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 16px;
+    border-radius: 20px;
+    gap: 12px;
+  }
+
+  .cap-side .av {
+    width: 48px;
+    height: 48px;
+  }
+
+  .cap-side h3 {
+    font-size: 1rem;
+  }
+
+  .cap-side p {
+    width: 100%;
+    font-size: .86rem;
+    margin: 0;
+  }
+
+  .cap-side .btn {
+    width: 100%;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: .9rem;
+  }
+
+  /* 4. Grillas en 2 columnas sin scroll atrapado */
+  .grid-3x2 {
+    --cols: 2;
+    --gap: 10px;
+    --pad: 2px;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .grid-3x2 .poster-title {
+    font-size: .78rem;
+    left: 9px;
+    right: 9px;
+    bottom: 8px;
+  }
+
+  .grid-3x2 .play {
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
+  }
+
+  .grid-3x2 .fecha {
+    font-size: .64rem;
+    padding: 2px 6px;
+    top: 7px;
+    right: 7px;
+  }
+
+  /* 5. Visor del directo bien encuadrado en celular */
+  dialog#visor {
+    width: 96vw;
+    max-width: 96vw;
+    margin: auto;
+  }
+
+  .visor-bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .visor-bar .visor-titulo {
+    flex: 1 1 100%;
+    padding-top: 0;
+    font-size: .9rem;
+  }
+
+  .visor-btns {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .marco.kickchat {
+    width: 100%;
+    height: auto;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(240px, 40dvh);
+  }
+
+  .marco.kickchat iframe:first-child {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+  }
+
+  .marco.kickchat iframe.chat {
+    width: 100%;
+    height: 100%;
+  }
+}
